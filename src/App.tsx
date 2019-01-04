@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import './App.css';
 import Bio from './components/Bio';
 import Books from './components/Books';

@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import IBook from '../models/IBook';
 import Book from './Book';
 

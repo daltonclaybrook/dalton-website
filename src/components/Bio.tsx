@@ -1,3 +1,5 @@
+import React from 'react';
+
 const Bio = () => (
     <div className="bio">
         <h1>Dalton Claybrook</h1>
