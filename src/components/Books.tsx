@@ -18,10 +18,6 @@ class Books extends Component<any, IBooksState> {
         };
     }
 
-    public componentDidMount() {
-        this.fetchBooks();
-    }
-
     public render() {
         return (
             <div className="books">
@@ -29,6 +25,10 @@ class Books extends Component<any, IBooksState> {
                 {this.state.books.map((book) => <Book key={book.id} {...book}/>)}
             </div>
         );
+    }
+
+    public componentDidMount() {
+        this.fetchBooks();
     }
 
     // MARK: - Helpers
