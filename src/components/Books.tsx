@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import IBook from '../models/IBook';
 import Book from './Book';
 
@@ -24,14 +24,15 @@ class Books extends Component<any, IBooksState> {
 
     public render() {
         return (
-            <>
+            <div className="books">
                 <h2>Books</h2>
                 {this.state.books.map((book) => <Book key={book.id} {...book}/>)}
-            </>
+            </div>
         );
     }
 
     // MARK: - Helpers
+
     private fetchBooks() {
         fetch('https://h6jmn6e3vk.execute-api.us-east-1.amazonaws.com/prod/books')
             .then((response) => {
