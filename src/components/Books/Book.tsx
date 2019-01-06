@@ -1,5 +1,5 @@
 import React from 'react';
-import IBook from '../models/IBook';
+import IBook from '../../models/IBook';
 
 const Book = (book: IBook) => (
     <div className="book">
