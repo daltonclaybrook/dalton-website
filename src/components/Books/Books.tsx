@@ -1,18 +1,26 @@
+
 import React, { SFC, useEffect, useState } from 'react';
 import IBook from '../../models/IBook';
 import { fetchBooks } from './api';
-import View from './BooksView';
+import Book from './Book';
 
-interface IBooksState {
+interface IBookSExpecting {
     books: IBook[];
 }
 
-const Books: SFC = () => {
+const enhancer = (Component: SFC<IBookSExpecting>) => () => {
   const [books, loadBooks] = useState<IBook[]>([]);
   useEffect(() => {
     fetchBooks().then(loadBooks);
   });
-  return <View books={books} />;
+  return <Component books={books} />;
 };
 
-export default Books;
+const View: SFC<IBookSExpecting> = ({ books }) => (
+  <div className="books">
+    <h2>Books</h2>
+    {books.map((book) => <Book key={book.id} {...book} />)}
+  </div>
+);
+
+export default enhancer(View);
