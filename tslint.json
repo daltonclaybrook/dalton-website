@@ -5,6 +5,7 @@
         "no-console": [false],
         "member-ordering": [false],
         "object-literal-sort-keys": [false],
-        "max-line-length": [true, 200]
+        "max-line-length": [true, 200],
+        "interface-name": [false]
     }
 }

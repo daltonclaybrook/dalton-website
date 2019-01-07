@@ -1,21 +1,21 @@
 import React, { SFC, useEffect, useState } from 'react';
-import ICheckin from '../../models/ICheckin';
+import Checkin from '../../models/Checkin';
 import { fetchCheckins } from './api';
 import CheckinCard from './CheckinCard';
 
-interface ICheckinsExpecting {
-    checkins: ICheckin[];
+interface CheckinsExpecting {
+    checkins: Checkin[];
 }
 
-const enhancer = (Component: SFC<ICheckinsExpecting>) => () => {
-    const [checkins, loadCheckins] = useState<ICheckin[]>([]);
+const enhancer = (Component: SFC<CheckinsExpecting>) => () => {
+    const [checkins, loadCheckins] = useState<Checkin[]>([]);
     useEffect(() => {
         fetchCheckins().then(loadCheckins);
     });
     return <Component checkins={checkins} />;
 };
 
-const View: SFC<ICheckinsExpecting> = ({ checkins }) => (
+const View: SFC<CheckinsExpecting> = ({ checkins }) => (
     <div className="checkins">
         <h2>Checkins</h2>
         {checkins.map((checkin) => <CheckinCard key={checkin.id} {...checkin} />)}

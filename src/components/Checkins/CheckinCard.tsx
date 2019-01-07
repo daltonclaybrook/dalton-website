@@ -1,7 +1,7 @@
 import React, { SFC } from 'react';
-import ICheckin from '../../models/ICheckin';
+import Checkin from '../../models/Checkin';
 
-const CheckinCard: SFC<ICheckin> = (checkin) => (
+const CheckinCard: SFC<Checkin> = (checkin) => (
     <div className="checkin">
         <h3>{checkin.venueName}</h3>
         {/* <h4>{checkin.createdAt.toDateString()}</h4> */}
