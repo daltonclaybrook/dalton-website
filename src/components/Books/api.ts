@@ -1,22 +1,11 @@
+import { fetchEndpoint } from '../../business/api';
 import Book from '../../models/Book';
 
 interface BooksResponse {
-  data: Book[];
-}
-
-enum ErrorReason {
-  NotOK = 'not ok',
+    data: Book[];
 }
 
 const ENDPOINT = 'https://h6jmn6e3vk.execute-api.us-east-1.amazonaws.com/prod/books';
 
-const isError = (response: Response) => !response.ok;
-
-export const fetchBooks = async (): Promise<Book[]> => {
-  const response = await fetch(ENDPOINT);
-  if (isError(response)) {
-    throw new Error(ErrorReason.NotOK);
-  }
-  const json = await response.json() as BooksResponse;
-  return json.data;
-};
+export const fetchBooks = async (): Promise<Book[]> =>
+    fetchEndpoint(ENDPOINT, (response: BooksResponse) => response.data);
