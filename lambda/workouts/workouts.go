@@ -18,7 +18,13 @@ import (
 
 // main function
 func main() {
-	lambda.Start(HandleRequest)
+	if len(os.Args) >= 2 && os.Args[1] == "test" {
+		fmt.Println("debug fetching activities...")
+		debugFetchActivities()
+	} else {
+		fmt.Println("setting up lambda...")
+		lambda.Start(HandleRequest)
+	}
 }
 
 // HandleRequest from lambda
@@ -27,18 +33,7 @@ func HandleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 		Headers: map[string]string{"Access-Control-Allow-Origin": "*"},
 	}
 
-	session, err := session.NewSession()
-	if err != nil {
-		return response, badAWSSession
-	}
-
-	db := dynamodb.New(session)
-	accessToken, err := getAccessToken(db)
-	if err != nil {
-		return response, err
-	}
-
-	activites, err := fetchActivities(accessToken)
+	activites, err := mainFetchActivities()
 	if err != nil {
 		return response, err
 	}
@@ -46,6 +41,30 @@ func HandleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 	response.StatusCode = 200
 	response.Body = activites
 	return response, nil
+}
+
+// called by lamda handler and used for testing
+func mainFetchActivities() (string, error) {
+	session, err := session.NewSession()
+	if err != nil {
+		return "", badAWSSession
+	}
+
+	db := dynamodb.New(session)
+	accessToken, err := getAccessToken(db)
+	if err != nil {
+		return "", err
+	}
+	return fetchActivities(accessToken)
+}
+
+func debugFetchActivities() {
+	activities, err := mainFetchActivities()
+	if err != nil {
+		fmt.Printf("error: %v\n", err)
+	} else {
+		fmt.Printf("activities: %v\n", activities)
+	}
 }
 
 // MARK: - Helpers
@@ -85,9 +104,15 @@ func getAccessToken(db *dynamodb.DynamoDB) (string, error) {
 }
 
 func refreshAndSaveNewAccessToken(refreshToken string, db *dynamodb.DynamoDB) (string, error) {
+	clientID := os.Getenv("STRAVA_CLIENT_ID")
+	clientSecret := os.Getenv("STRAVA_CLIENT_SECRET")
+	if len(clientID) == 0 || len(clientSecret) == 0 {
+		return "", missingStravaEnv
+	}
+
 	payloadMap := map[string]string{
-		"client_id":     os.Getenv("STRAVA_CLIENT_ID"),
-		"client_secret": os.Getenv("STRAVA_CLIENT_SECRET"),
+		"client_id":     clientID,
+		"client_secret": clientSecret,
 		"grant_type":    "refresh_token",
 		"refresh_token": refreshToken,
 	}
@@ -210,6 +235,7 @@ type FetchError int
 
 const (
 	badAWSSession           FetchError = iota
+	missingStravaEnv        FetchError = iota
 	tokenRefreshFailed      FetchError = iota
 	activitiesRequestFailed FetchError = iota
 	notFound                FetchError = iota
@@ -219,6 +245,8 @@ func (err FetchError) Error() string {
 	switch err {
 	case badAWSSession:
 		return "Unable to create AWS session"
+	case missingStravaEnv:
+		return "Missing environment variables for Strava. Requires STRAVA_CLIENT_ID and STRAVA_CLIENT_SECRET to be set."
 	case tokenRefreshFailed:
 		return "Failed to refresh the strava token"
 	case activitiesRequestFailed:
