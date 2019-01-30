@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import Book from '../../models/Book';
 
-const BookCard: SFC<Book> = (book) => (
+const BookCard: FunctionComponent<Book> = (book) => (
     <div className="book">
         <img src={book.imageURL}/>
         <a href={book.link}><h3>{book.title}</h3></a>
