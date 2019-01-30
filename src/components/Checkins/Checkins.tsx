@@ -15,7 +15,7 @@ const enhancer = (Component: FunctionComponent<CheckinsExpecting>) => () => {
     return <Component checkins={checkins} />;
 };
 
-const View: SFC<CheckinsExpecting> = ({ checkins }) => (
+const View: FunctionComponent<CheckinsExpecting> = ({ checkins }) => (
     <div className="checkins">
         <h2>Checkins</h2>
         {checkins.map((checkin) => <CheckinCard key={checkin.id} {...checkin} />)}
