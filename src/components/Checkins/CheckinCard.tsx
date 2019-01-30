@@ -1,4 +1,4 @@
-import React, { SFC } from 'react';
+import React, { FunctionComponent } from 'react';
 import Checkin from '../../models/Checkin';
 
 const CheckinCard: SFC<Checkin> = (checkin) => (
