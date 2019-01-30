@@ -1,4 +1,4 @@
-interface IBook {
+interface Book {
     id: string;
     title: string;
     imageURL: string;
@@ -6,4 +6,4 @@ interface IBook {
     authors: string[];
 }
 
-export default IBook;
+export default Book;
