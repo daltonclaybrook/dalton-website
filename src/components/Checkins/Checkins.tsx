@@ -1,4 +1,4 @@
-import React, { SFC, useEffect, useState } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import Checkin from '../../models/Checkin';
 import { fetchCheckins } from './api';
 import CheckinCard from './CheckinCard';
