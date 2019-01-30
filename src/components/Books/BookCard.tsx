@@ -1,4 +1,4 @@
-import React, { SFC } from 'react';
+import React, { FunctionComponent } from 'react';
 import Book from '../../models/Book';
 
 const BookCard: SFC<Book> = (book) => (
