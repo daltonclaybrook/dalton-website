@@ -12,7 +12,7 @@ const enhancer = (Component: FunctionComponent<BooksExpecting>) => () => {
   const [books, loadBooks] = useState<Book[]>([]);
   useEffect(() => {
     fetchBooks().then(loadBooks);
-  });
+  }, []); // pass an empty array to keep from calling `useEffect` recursively on state change.
   return <Component books={books} />;
 };
 

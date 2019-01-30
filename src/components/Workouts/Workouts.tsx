@@ -12,7 +12,7 @@ const enhancer = (Component: FunctionComponent<WorkoutsExpecting>) => () => {
     const [workouts, loadWorkouts] = useState<Workout[]>([]);
     useEffect(() => {
         fetchWorkouts().then(loadWorkouts);
-    });
+    }, []); // pass an empty array to keep from calling `useEffect` recursively on state change.
     return <Component workouts={workouts} />;
 };
 
