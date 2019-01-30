@@ -1,22 +1,11 @@
-import IBook from '../../models/IBook';
+import { fetchEndpoint } from '../../business/api';
+import Book from '../../models/Book';
 
-interface IBooksResponse {
-  data: IBook[];
-}
-
-enum ErrorReason {
-  NotOK = 'not ok',
+interface BooksResponse {
+    data: Book[];
 }
 
 const ENDPOINT = 'https://h6jmn6e3vk.execute-api.us-east-1.amazonaws.com/prod/books';
 
-const isError = (response: Response) => !response.ok;
-
-export const fetchBooks = async (): Promise<IBook[]> => {
-  const response = await fetch(ENDPOINT);
-  if (isError(response)) {
-    throw new Error(ErrorReason.NotOK);
-  }
-  const json = await response.json() as IBooksResponse;
-  return json.data;
-};
+export const fetchBooks = async (): Promise<Book[]> =>
+    fetchEndpoint(ENDPOINT, (response: BooksResponse) => response.data);

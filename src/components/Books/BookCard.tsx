@@ -1,7 +1,7 @@
-import React from 'react';
-import IBook from '../../models/IBook';
+import React, { FunctionComponent } from 'react';
+import Book from '../../models/Book';
 
-const Book = (book: IBook) => (
+const BookCard: FunctionComponent<Book> = (book) => (
     <div className="book">
         <img src={book.imageURL}/>
         <a href={book.link}><h3>{book.title}</h3></a>
@@ -9,4 +9,4 @@ const Book = (book: IBook) => (
     </div>
 );
 
-export default Book;
+export default BookCard;
