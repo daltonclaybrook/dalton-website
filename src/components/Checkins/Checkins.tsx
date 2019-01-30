@@ -7,7 +7,7 @@ interface CheckinsExpecting {
     checkins: Checkin[];
 }
 
-const enhancer = (Component: SFC<CheckinsExpecting>) => () => {
+const enhancer = (Component: FunctionComponent<CheckinsExpecting>) => () => {
     const [checkins, loadCheckins] = useState<Checkin[]>([]);
     useEffect(() => {
         fetchCheckins().then(loadCheckins);
