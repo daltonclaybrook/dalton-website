@@ -1,9 +1,11 @@
 import React, { FunctionComponent } from 'react';
-import Workout from '../../models/Workout';
+import WorkoutViewModel from '../../view-models/WorkoutViewModel';
 
-const WorkoutCard: FunctionComponent<Workout> = (workout) => (
+const WorkoutCard: FunctionComponent<WorkoutViewModel> = (workout) => (
     <div className="workout">
-        <h3>{workout.name}</h3>
+        <a href={workout.link}><h3>{workout.name}</h3></a>
+        <h4>{workout.startString}</h4>
+        <h4>{workout.durationString}</h4>
     </div>
 );
 

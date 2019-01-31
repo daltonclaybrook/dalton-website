@@ -1,17 +1,19 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import Workout from '../../models/Workout';
-import Checkins from '../Checkins';
+import WorkoutViewModel from '../../view-models/WorkoutViewModel';
+import { makeWorkoutViewModel } from '../../view-models/WorkoutViewModelFactory';
 import { fetchWorkouts } from './api';
 import WorkoutCard from './WorkoutCard';
 
 interface WorkoutsExpecting {
-    workouts: Workout[];
+    workouts: WorkoutViewModel[];
 }
 
 const enhancer = (Component: FunctionComponent<WorkoutsExpecting>) => () => {
-    const [workouts, loadWorkouts] = useState<Workout[]>([]);
+    const [workouts, loadWorkouts] = useState<WorkoutViewModel[]>([]);
     useEffect(() => {
-        fetchWorkouts().then(loadWorkouts);
+        fetchWorkouts()
+            .then((w) => w.map(makeWorkoutViewModel))
+            .then(loadWorkouts);
     }, []); // pass an empty array to keep from calling `useEffect` recursively on state change.
     return <Component workouts={workouts} />;
 };
