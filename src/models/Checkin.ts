@@ -1,18 +1,16 @@
-import React from 'react';
-
-interface ILocation {
+interface Location {
     lat: number;
     long: number;
     city: string;
     state: string;
 }
 
-interface ICheckin {
+interface Checkin {
     id: string;
     venueName: string;
     createdAt: Date;
     imageURL?: string;
-    location: ILocation;
+    location: Location;
 }
 
-export default ICheckin;
+export default Checkin;

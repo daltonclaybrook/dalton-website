@@ -11,7 +11,7 @@ const enhancer = (Component: FunctionComponent<CheckinsExpecting>) => () => {
     const [checkins, loadCheckins] = useState<Checkin[]>([]);
     useEffect(() => {
         fetchCheckins().then(loadCheckins);
-    });
+    }, []); // pass an empty array to keep from calling `useEffect` recursively on state change.
     return <Component checkins={checkins} />;
 };
 
