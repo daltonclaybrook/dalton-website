@@ -2,6 +2,7 @@
   "name": "dalton",
   "version": "0.1.0",
   "private": true,
+  "homepage" : "http://dalton-react-site.s3-website-us-east-1.amazonaws.com",
   "dependencies": {
     "@types/jest": "^23.3.11",
     "@types/node": "^10.12.18",
