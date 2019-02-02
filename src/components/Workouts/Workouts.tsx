@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import WorkoutViewModel, { makeWorkoutViewModel } from '../../view-models/WorkoutViewModel';
+import WorkoutViewModel from '../../view-models/WorkoutViewModel';
+import { makeWorkoutViewModel } from '../../view-models/WorkoutViewModelFactory';
 import { fetchWorkouts } from './api';
 import WorkoutCard from './WorkoutCard';
 
