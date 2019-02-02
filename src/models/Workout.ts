@@ -1,12 +1,13 @@
 interface Workout {
     id: number;
     name: string;
-    distance: number;
     elapsed_time: number;
     type: string;
     start_date: string;
+    external_id: string;
 
     // metrics
+    distance: number;
     average_speed: number;
     max_speed: number;
     average_cadence: number;
