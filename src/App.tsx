@@ -10,8 +10,8 @@ class App extends Component {
     return (
       <>
         <Bio />
-        <Books />
         <Checkins />
+        <Books />
         <Workouts />
       </>
     );
