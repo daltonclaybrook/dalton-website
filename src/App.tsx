@@ -13,8 +13,8 @@ class App extends Component {
       <>
         <Bio />
         <Links />
-        <Books />
         <Checkins />
+        <Books />
         <Workouts />
         <Games />
       </>
