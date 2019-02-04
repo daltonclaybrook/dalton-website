@@ -10,7 +10,7 @@ import Workouts from './components/Workouts';
 
 const AppWrapper = styled.div`
   margin: auto;
-  max-width: 42rem;
+  max-width: 54rem;
   padding: 2.625rem 1.3125rem;
   font-family: 'Roboto Mono', monospace;
 `;
