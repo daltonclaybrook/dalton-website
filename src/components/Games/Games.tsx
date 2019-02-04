@@ -1,5 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
+import Header from '../shared/Header';
 
 const Game = styled.iframe`
     border-style: solid;
@@ -8,7 +9,7 @@ const Game = styled.iframe`
 
 const Games: FunctionComponent = () => (
     <div className="games">
-        <h2>Games</h2>
+        <Header>Games</Header>
         <Game src="https://itch.io/embed/359750" width="552" height="167"></Game>
     </div>
 );

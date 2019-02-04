@@ -18,7 +18,7 @@ const enhancer = (Component: FunctionComponent<CheckinsExpecting>) => () => {
 
 const View: FunctionComponent<CheckinsExpecting> = ({ checkins }) => (
     <div className="checkins">
-        <Header>Checkins</Header>
+        <Header>Last spotted</Header>
         {checkins.map((checkin) => <CheckinCard key={checkin.id} {...checkin} />)}
     </div>
 );
