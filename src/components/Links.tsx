@@ -16,6 +16,10 @@ const LinksBlock = styled.div`
 
 const SpacedLink = styled.a`
     margin: 0rem 0.875rem;
+
+    @media (max-width: 700px) {
+        margin: 0rem 0.275rem;
+    }
 `;
 
 interface LinkProps {
