@@ -6,7 +6,7 @@ interface HeaderProps {
 }
 
 const Header: FunctionComponent<HeaderProps> = ({ children }) => (
-    <div className="header">
+    <div>
         <h2>{children}</h2>
         <hr />
     </div>
