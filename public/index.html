@@ -26,6 +26,14 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <script>
+      function initMap() {
+        console.log("maps did init!");
+      }
+    </script>
+    <script async defer type="text/javascript" 
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyACy1iXolGm5DL4c1uhfN53NpZ0089Qrmo&libraries=places&callback=initMap">
+    </script>
     <div id="root"></div>
     <!--
       This HTML file is a template.
