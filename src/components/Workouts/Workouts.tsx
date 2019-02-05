@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import WorkoutViewModel from '../../view-models/WorkoutViewModel';
 import { makeWorkoutViewModel } from '../../view-models/WorkoutViewModelFactory';
+import Header from '../shared/Header';
 import { fetchWorkouts } from './api';
 import WorkoutCard from './WorkoutCard';
 
@@ -20,7 +21,7 @@ const enhancer = (Component: FunctionComponent<WorkoutsExpecting>) => () => {
 
 const Workouts: FunctionComponent<WorkoutsExpecting> = ({ workouts }) => (
     <div className="workouts">
-        <h2>Workouts</h2>
+        <Header>Workouts</Header>
         {workouts.map((workout) => <WorkoutCard key={workout.id} {...workout} /> )}
     </div>
 );

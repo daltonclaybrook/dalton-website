@@ -1,6 +1,7 @@
 
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import Book from '../../models/Book';
+import Header from '../shared/Header';
 import { fetchBooks } from './api';
 import BookCard from './BookCard';
 
@@ -18,7 +19,7 @@ const enhancer = (Component: FunctionComponent<BooksExpecting>) => () => {
 
 const View: FunctionComponent<BooksExpecting> = ({ books }) => (
   <div className="books">
-    <h2>Books</h2>
+    <Header>Books</Header>
     {books.map((book) => <BookCard key={book.id} {...book} />)}
   </div>
 );

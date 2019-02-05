@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import Checkin from '../../models/Checkin';
+import Header from '../shared/Header';
 import { fetchCheckins } from './api';
 import CheckinCard from './CheckinCard';
 
@@ -17,7 +18,7 @@ const enhancer = (Component: FunctionComponent<CheckinsExpecting>) => () => {
 
 const View: FunctionComponent<CheckinsExpecting> = ({ checkins }) => (
     <div className="checkins">
-        <h2>Checkins</h2>
+        <Header>Last spotted</Header>
         {checkins.map((checkin) => <CheckinCard key={checkin.id} {...checkin} />)}
     </div>
 );

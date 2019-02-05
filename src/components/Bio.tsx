@@ -1,9 +1,16 @@
 import marked from 'marked';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import Links from './Links';
 
 const Avatar = styled.img`
+    display: block;
+    margin: auto;
     border-radius: 50%;
+`;
+
+const Heading = styled.h1`
+    text-align: center;
 `;
 
 const ENDPOINT = `${process.env.PUBLIC_URL}/bio.md`;
@@ -28,8 +35,9 @@ const enhancer = (Component: FunctionComponent) => () => {
 
 const Bio: FunctionComponent = () => (
     <div className="bio">
-        <Avatar src="https://gravatar.com/avatar/409d9fd7356a2876a35dcd461713d749?s=400" />
-        <h1>Hi, I'm Dalton.</h1>
+        <Avatar src="https://gravatar.com/avatar/409d9fd7356a2876a35dcd461713d749?s=350" />
+        <Heading>Hi, I'm Dalton.</Heading>
+        <Links />
         <div id={BIOID} />
     </div>
 );
