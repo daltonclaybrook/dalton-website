@@ -25,6 +25,7 @@ const SpacedLink = styled.a`
 interface LinkProps {
     link: string;
     img: string;
+    alt: string;
 }
 
 const ImgLink: FunctionComponent<LinkProps> = ({ link, img }) => (
@@ -34,11 +35,11 @@ const ImgLink: FunctionComponent<LinkProps> = ({ link, img }) => (
 const Links: FunctionComponent = () => (
     <LinksDiv className="links">
         <LinksBlock>
-            <ImgLink link="https://github.com/daltonclaybrook" img={github} />
-            <ImgLink link="https://twitter.com/daltonclaybrook" img={twitter} />
-            <ImgLink link="https://www.linkedin.com/in/dalton-claybrook-b7409629/" img={linkedin} />
-            <ImgLink link="https://www.instagram.com/daltonclaybrook/" img={instagram} />
-            <ImgLink link="http://stackoverflow.com/users/907186/daltonclaybrook" img={stackoverflow} />
+            <ImgLink link="https://github.com/daltonclaybrook" img={github} alt="github"/>
+            <ImgLink link="https://twitter.com/daltonclaybrook" img={twitter} alt="twitter" />
+            <ImgLink link="https://www.linkedin.com/in/dalton-claybrook-b7409629/" img={linkedin} alt="linked in" />
+            <ImgLink link="https://www.instagram.com/daltonclaybrook/" img={instagram} alt="instagram" />
+            <ImgLink link="http://stackoverflow.com/users/907186/daltonclaybrook" img={stackoverflow} alt="stack overflow" />
         </LinksBlock>
     </LinksDiv>
 );

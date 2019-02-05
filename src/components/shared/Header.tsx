@@ -1,15 +1,7 @@
-import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
 
-interface HeaderProps {
-    children: string;
-}
-
-const Header: FunctionComponent<HeaderProps> = ({ children }) => (
-    <div>
-        <h2>{children}</h2>
-        <hr />
-    </div>
-);
+const Header = styled.h2`
+    border-bottom: 1px solid black;
+`;
 
 export default Header;
