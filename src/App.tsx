@@ -4,7 +4,6 @@ import './App.css';
 import Bio from './components/Bio';
 import Books from './components/Books';
 import Checkins from './components/Checkins';
-import Google from './components/Checkins/Google';
 import Games from './components/Games';
 import Workouts from './components/Workouts';
 
@@ -34,7 +33,6 @@ class App extends Component {
     return (
       <AppWrapper>
         <Bio />
-        <Google {...googleProps} />
         <Checkins />
         <Books />
         <Workouts />

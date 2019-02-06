@@ -3,6 +3,7 @@ import Checkin from '../../models/Checkin';
 import Header from '../shared/Header';
 import { fetchCheckins } from './api';
 import CheckinCard from './CheckinCard';
+import Google from './Google';
 
 interface CheckinsExpecting {
     checkins: Checkin[];
@@ -19,7 +20,9 @@ const enhancer = (Component: FunctionComponent<CheckinsExpecting>) => () => {
 const View: FunctionComponent<CheckinsExpecting> = ({ checkins }) => (
     <div className="checkins">
         <Header>Last spotted</Header>
-        {checkins.map((checkin) => <CheckinCard key={checkin.id} {...checkin} />)}
+        {checkins.length > 0 &&
+            <Google checkins={checkins} />
+        }
     </div>
 );
 
