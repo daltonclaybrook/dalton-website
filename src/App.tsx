@@ -4,9 +4,16 @@ import './App.css';
 import Bio from './components/Bio';
 import Books from './components/Books';
 import Checkins from './components/Checkins';
+import Google from './components/Checkins/Google';
 import Games from './components/Games';
-import Links from './components/Links';
 import Workouts from './components/Workouts';
+
+declare global {
+  interface Window {
+    hasGoogleLoaded: boolean;
+    googleInit(): any;
+  }
+}
 
 const AppWrapper = styled.div`
   margin: auto;
@@ -20,6 +27,7 @@ class App extends Component {
     return (
       <AppWrapper>
         <Bio />
+        <Google />
         <Checkins />
         <Books />
         <Workouts />
