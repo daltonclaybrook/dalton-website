@@ -96,7 +96,7 @@ class Google extends React.Component<GoogleProps, GoogleState> {
                 });
                 return marker;
             });
-        }).then((markers) => this.fitMapBoundsToMarkers(markers.filter(Boolean) as any));
+        }).then((markers) => this.fitMapBoundsToMarkers(markers.filter(Boolean) as google.maps.Marker[]));
     }
 
     private fitMapBoundsToMarkers = (markers: google.maps.Marker[]) => {
