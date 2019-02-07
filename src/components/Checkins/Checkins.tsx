@@ -26,7 +26,12 @@ interface CheckinsExpecting {
     checkins: Checkin[];
 }
 
-const enhancer = (Component: FunctionComponent<CheckinsExpecting>) => () => {
+interface CardAndMapExpecting {
+    checkins: Checkin[];
+    first: Checkin;
+}
+
+const fetchCheckinsEnhancer = (Component: FunctionComponent<CheckinsExpecting>) => () => {
     const [checkins, loadCheckins] = useState<Checkin[]>([]);
     useEffect(() => {
         fetchCheckins().then(loadCheckins);
@@ -34,20 +39,24 @@ const enhancer = (Component: FunctionComponent<CheckinsExpecting>) => () => {
     return <Component checkins={checkins} />;
 };
 
-const View: FunctionComponent<CheckinsExpecting> = ({ checkins }) => (
+const sectionEnhancer = (Component: FunctionComponent<CardAndMapExpecting>) => ({ checkins }: CheckinsExpecting) => (
     <div>
         <Header>Recently spotted</Header>
         {checkins.length > 0 &&
-            <Box>
-                <CardBox>
-                    <CheckinCard {...checkins[0]} />
-                </CardBox>
-                <MapBox>
-                    <Google checkins={checkins} />
-                </MapBox>
-            </Box>
+            <Component checkins={checkins} first={checkins[0]} />
         }
     </div>
 );
 
-export default enhancer(View);
+const CardAndMapView: FunctionComponent<CardAndMapExpecting> = ({ checkins, first }) => (
+    <Box>
+        <CardBox>
+            <CheckinCard {...first} />
+        </CardBox>
+        <MapBox>
+            <Google checkins={checkins} />
+        </MapBox>
+    </Box>
+);
+
+export default fetchCheckinsEnhancer(sectionEnhancer(CardAndMapView));
