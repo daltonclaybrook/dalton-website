@@ -2,10 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import Checkin from '../../models/Checkin';
 
-const Box = styled.div`
-    margin: auto;
-    height: 400px;
-    background-color: green;
+const Map = styled.div`
+    height: 100%;
 `;
 
 interface GoogleProps {
@@ -30,8 +28,8 @@ class Google extends React.Component<GoogleProps, GoogleState> {
     }
 
     public render = () => {
-        return <Box ref={this.state.mapRef}>Loading map...</Box>;
-      }
+        return <Map ref={this.state.mapRef}>Loading map...</Map>;
+    }
 
     public componentDidUpdate = () => {
         this.createMapIfNecessary();
@@ -75,34 +73,31 @@ class Google extends React.Component<GoogleProps, GoogleState> {
 
         const maps = this.state.google.maps;
         const { checkins } = this.props;
-        const service = new maps.places.PlacesService(this.map);
 
-        const markers: google.maps.Marker[] = [];
-        checkins.forEach((checkin) => {
-            console.log(`loading... ${checkin.venueName}`);
-            service.findPlaceFromQuery({
+        const markers = checkins.map((checkin) => {
+            const location = new maps.LatLng(checkin.location.lat, checkin.location.long);
+            const place = {
+                location,
                 query: checkin.venueName,
-                fields: ['name', 'geometry', 'place_id'],
-                locationBias: new maps.LatLng(checkin.location.lat, checkin.location.long),
-            }, (results, status) => {
-                if (status !== maps.places.PlacesServiceStatus.OK || results.length < 1) { return; }
-                const result = results[0];
-                console.log(`loaded: ${result.name}, keys: ${Object.keys(result)}`);
-
-                const place = {
-                    location: result.geometry.location,
-                    placeId: result.place_id,
-                };
-                const marker = new maps.Marker({
-                    title: result.name,
-                    position: result.geometry.location,
-                    map: this.map,
-                    place,
-                });
-                markers.push(marker);
-                this.fitMapBoundsToMarkers(markers);
+            };
+            const marker = new maps.Marker({
+                title: checkin.venueName,
+                position: location,
+                map: this.map,
+                place,
             });
+            marker.addListener('click', () => {
+                console.log(`click: ${checkin.venueName}`);
+            });
+            marker.addListener('mouseover', () => {
+                console.log(`mouseover: ${checkin.venueName}`);
+            });
+            marker.addListener('mouseout', () => {
+                console.log(`mouseout: ${checkin.venueName}`);
+            });
+            return marker;
         });
+        this.fitMapBoundsToMarkers(markers);
     }
 
     private fitMapBoundsToMarkers = (markers: google.maps.Marker[]) => {
