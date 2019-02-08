@@ -4,9 +4,10 @@ import Checkin from '../../models/Checkin';
 import Header from '../shared/Header';
 import { fetchCheckins } from './api';
 import CheckinCard from './CheckinCard';
+import { CheckinsContextProvider } from './CheckinsContext';
 import Google from './Google';
 
-const Box = styled.div`
+const StyledProvider = styled(CheckinsContextProvider)`
     display: flex;
     margin: auto;
     height: 20rem;
@@ -26,11 +27,6 @@ interface CheckinsExpecting {
     checkins: Checkin[];
 }
 
-interface CardAndMapExpecting {
-    checkins: Checkin[];
-    first: Checkin;
-}
-
 const fetchCheckinsEnhancer = (Component: FunctionComponent<CheckinsExpecting>) => () => {
     const [checkins, loadCheckins] = useState<Checkin[]>([]);
     useEffect(() => {
@@ -39,24 +35,24 @@ const fetchCheckinsEnhancer = (Component: FunctionComponent<CheckinsExpecting>) 
     return <Component checkins={checkins} />;
 };
 
-const sectionEnhancer = (Component: FunctionComponent<CardAndMapExpecting>) => ({ checkins }: CheckinsExpecting) => (
+const CheckinsSection: FunctionComponent<CheckinsExpecting> = ({ checkins }: CheckinsExpecting) => (
     <div>
         <Header>Recently spotted</Header>
         {checkins.length > 0 &&
-            <Component checkins={checkins} first={checkins[0]} />
+            <CardAndMapView checkins={checkins} />
         }
     </div>
 );
 
-const CardAndMapView: FunctionComponent<CardAndMapExpecting> = ({ checkins, first }) => (
-    <Box>
+const CardAndMapView: FunctionComponent<CheckinsExpecting> = ({ checkins }) => (
+    <StyledProvider value={{ selected: null }}>
         <CardBox>
-            <CheckinCard {...first} />
+            <CheckinCard />
         </CardBox>
         <MapBox>
             <Google checkins={checkins} />
         </MapBox>
-    </Box>
+    </StyledProvider>
 );
 
-export default fetchCheckinsEnhancer(sectionEnhancer(CardAndMapView));
+export default fetchCheckinsEnhancer(CheckinsSection);
