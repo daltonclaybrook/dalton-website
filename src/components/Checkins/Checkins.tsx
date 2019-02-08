@@ -7,7 +7,7 @@ import CheckinCard from './CheckinCard';
 import { CheckinsContextProvider } from './CheckinsContext';
 import Google from './Google';
 
-const StyledProvider = styled(CheckinsContextProvider)`
+const Box = styled.div`
     display: flex;
     margin: auto;
     height: 20rem;
@@ -36,23 +36,23 @@ const fetchCheckinsEnhancer = (Component: FunctionComponent<CheckinsExpecting>) 
 };
 
 const CheckinsSection: FunctionComponent<CheckinsExpecting> = ({ checkins }: CheckinsExpecting) => (
-    <div>
+    <CheckinsContextProvider value={{ selected: null }}>
         <Header>Recently spotted</Header>
         {checkins.length > 0 &&
             <CardAndMapView checkins={checkins} />
         }
-    </div>
+    </CheckinsContextProvider>
 );
 
 const CardAndMapView: FunctionComponent<CheckinsExpecting> = ({ checkins }) => (
-    <StyledProvider value={{ selected: null }}>
+    <Box>
         <CardBox>
             <CheckinCard />
         </CardBox>
         <MapBox>
             <Google checkins={checkins} />
         </MapBox>
-    </StyledProvider>
+    </Box>
 );
 
 export default fetchCheckinsEnhancer(CheckinsSection);
