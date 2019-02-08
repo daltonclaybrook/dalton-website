@@ -17,6 +17,7 @@ interface GoogleState {
 }
 
 type PlacesService = google.maps.places.PlacesService;
+type Marker = google.maps.Marker;
 
 class Google extends React.Component<GoogleProps, GoogleState> {
     private map?: google.maps.Map = undefined;
@@ -48,6 +49,7 @@ class Google extends React.Component<GoogleProps, GoogleState> {
 
     private googleInit = () => {
         console.log('google init in component');
+        window.hasGoogleLoaded = true;
         this.setState({ hasGoogleLoaded: true });
     }
 
@@ -75,31 +77,39 @@ class Google extends React.Component<GoogleProps, GoogleState> {
         const { checkins } = this.props;
         const service = new google.maps.places.PlacesService(this.map);
 
-        const detailPromises = checkins.map((c) => this.fetchPlace(c, service));
-        Promise.all(detailPromises).then((allDetails) => {
-            return allDetails.map((details): google.maps.Marker|null => {
-                if (!details) { return null; }
-                const position = new google.maps.LatLng(details.lat, details.long);
-                const marker = new google.maps.Marker({
-                    title: details.name,
-                    position,
-                    map: this.map,
-                });
-                marker.addListener('click', () => {
-                    console.log(`click: ${details.name}`);
-                });
-                marker.addListener('mouseover', () => {
-                    console.log(`mouseover: ${details.name}`);
-                });
-                marker.addListener('mouseout', () => {
-                    console.log(`mouseout: ${details.name}`);
-                });
-                return marker;
-            });
-        }).then((markers) => this.fitMapBoundsToMarkers(markers.filter(Boolean) as google.maps.Marker[]));
+        const markers: Marker[] = [];
+        checkins.forEach((checkin) => {
+            this.fetchPlaceId(checkin, service)
+                .then(this.fetchPlaceDetails(checkin, service))
+                .then(this.createMarker)
+                .then((marker) => {
+                    markers.push(marker);
+                    this.fitMapBoundsToMarkers(markers);
+                })
+                .catch((reason) => console.log(reason));
+        });
     }
 
-    private fitMapBoundsToMarkers = (markers: google.maps.Marker[]) => {
+    private createMarker = (details: CheckinDetails): Marker => {
+        const position = new google.maps.LatLng(details.lat, details.long);
+        const marker = new google.maps.Marker({
+            title: details.name,
+            position,
+            map: this.map,
+        });
+        marker.addListener('click', () => {
+            console.log(`click: ${details.name}`);
+        });
+        marker.addListener('mouseover', () => {
+            console.log(`mouseover: ${details.name}`);
+        });
+        marker.addListener('mouseout', () => {
+            console.log(`mouseout: ${details.name}`);
+        });
+        return marker;
+    }
+
+    private fitMapBoundsToMarkers = (markers: Marker[]) => {
         if (!this.map || !this.state.hasGoogleLoaded) { return; }
         const bounds = new google.maps.LatLngBounds();
         markers.forEach((marker) => {
@@ -108,33 +118,48 @@ class Google extends React.Component<GoogleProps, GoogleState> {
         this.map.fitBounds(bounds);
     }
 
-    private fetchPlace = async (checkin: Checkin, service: PlacesService): Promise<CheckinDetails|null> => {
+    private fetchPlaceId = (checkin: Checkin, service: PlacesService): Promise<string> => {
         return new Promise((resolve, reject) => {
             service.findPlaceFromQuery({
                 query: checkin.venueName,
-                fields: ['formatted_address', 'geometry', 'photos'],
+                fields: ['place_id'],
                 locationBias: new google.maps.LatLng(checkin.location.lat, checkin.location.long),
             }, (results, status) => {
                 if (status !== google.maps.places.PlacesServiceStatus.OK || results.length < 1) {
-                    resolve(null);
+                    reject(`bad place id response for checkin: ${checkin.venueName}`);
+                } else {
+                    resolve(results[0].place_id);
+                }
+            });
+        });
+    }
+
+    private fetchPlaceDetails = (checkin: Checkin, service: PlacesService) => (placeId: string): Promise<CheckinDetails> => {
+        return new Promise((resolve, reject) => {
+            service.getDetails({
+                placeId,
+                fields: ['formatted_address', 'geometry', 'icon', 'photo', 'url', 'website'],
+            }, (place, status) => {
+                if (status !== google.maps.places.PlacesServiceStatus.OK || !place) {
+                    reject(`bad details response for checkin: ${checkin.venueName}`);
                 }
 
-                const result = results[0];
-                let photoURL = undefined as (string|undefined); // is there a more idiomatic way?
-                if (result.photos.length > 0) {
-                    photoURL = result.photos[0].getUrl({});
+                let photoURL: (string|undefined);
+                if (place.photos.length > 0) {
+                    photoURL = place.photos[0].getUrl({});
                 }
 
                 const details: CheckinDetails = {
                     name: checkin.venueName,
-                    lat: result.geometry.location.lat(),
-                    long: result.geometry.location.lng(),
-                    address: result.formatted_address,
+                    lat: place.geometry.location.lat(),
+                    long: place.geometry.location.lng(),
+                    address: place.formatted_address,
                     dateString: 'todo', // make me pretty
-                    linkURL: result.url,
+                    linkURL: place.website || place.url,
                     photoURL,
                     stickerImageURL: checkin.imageURL,
                 };
+                console.log(details);
                 resolve(details);
             });
         });
