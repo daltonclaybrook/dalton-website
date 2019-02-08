@@ -21,6 +21,7 @@ type Marker = google.maps.Marker;
 
 class Google extends React.Component<GoogleProps, GoogleState> {
     private map?: google.maps.Map = undefined;
+    private markers: Marker[] = [];
 
     constructor(props: GoogleProps) {
         super(props);
@@ -54,17 +55,12 @@ class Google extends React.Component<GoogleProps, GoogleState> {
     }
 
     private createMapIfNecessary = () => {
-        // bounce if map already exists, or google is not initialized
-        if (this.map || !this.state.hasGoogleLoaded) { return; }
+        // bounce if google is not initialized
+        if (!this.state.hasGoogleLoaded) { return; }
         console.log('creating map...');
 
         const node = this.state.mapRef.current;
-        if (node instanceof HTMLDivElement) {
-            // this.map = new maps.Map(node, {
-            //     disableDefaultUI: true,
-            //     draggable: false,
-            //     disableDoubleClickZoom: true,
-            // });
+        if (node) {
             this.map = new google.maps.Map(node);
         }
     }
@@ -73,18 +69,19 @@ class Google extends React.Component<GoogleProps, GoogleState> {
         // bounce if map or google doesn't exist
         if (!this.map || !this.state.hasGoogleLoaded) { return; }
         console.log('updating map...');
+        this.markers.forEach((m) => m.setMap(null));
+        this.markers = [];
 
         const { checkins } = this.props;
         const service = new google.maps.places.PlacesService(this.map);
 
-        const markers: Marker[] = [];
         checkins.forEach((checkin) => {
             this.fetchPlaceId(checkin, service)
                 .then(this.fetchPlaceDetails(checkin, service))
                 .then(this.createMarker)
                 .then((marker) => {
-                    markers.push(marker);
-                    this.fitMapBoundsToMarkers(markers);
+                    this.markers.push(marker);
+                    this.fitMapBoundsToMarkers(this.markers);
                 })
                 .catch((reason) => console.log(reason));
         });
@@ -159,7 +156,6 @@ class Google extends React.Component<GoogleProps, GoogleState> {
                     photoURL,
                     stickerImageURL: checkin.imageURL,
                 };
-                console.log(details);
                 resolve(details);
             });
         });
