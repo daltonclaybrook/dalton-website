@@ -1,10 +1,10 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, { Component } from 'react';
 import styled from 'styled-components';
 import Checkin from '../../models/Checkin';
+import CheckinDetails from '../../models/CheckinDetails';
 import Header from '../shared/Header';
 import { fetchCheckins } from './api';
 import CheckinCard from './CheckinCard';
-import { CheckinsContextProvider } from './CheckinsContext';
 import Google from './Google';
 
 const Box = styled.div`
@@ -23,36 +23,44 @@ const MapBox = styled.div`
     flex: 70%;
 `;
 
-interface CheckinsExpecting {
+interface CheckinsState {
     checkins: Checkin[];
+    selected?: CheckinDetails;
 }
 
-const fetchCheckinsEnhancer = (Component: FunctionComponent<CheckinsExpecting>) => () => {
-    const [checkins, loadCheckins] = useState<Checkin[]>([]);
-    useEffect(() => {
-        fetchCheckins().then(loadCheckins);
-    }, []); // pass an empty array to keep from calling `useEffect` recursively on state change.
-    return <Component checkins={checkins} />;
-};
+class Checkins extends Component<any, CheckinsState> {
+    constructor(props: any) {
+        super(props);
+        this.state = { checkins: [] };
+    }
 
-const CheckinsSection: FunctionComponent<CheckinsExpecting> = ({ checkins }: CheckinsExpecting) => (
-    <CheckinsContextProvider value={{ selected: null }}>
-        <Header>Recently spotted</Header>
-        {checkins.length > 0 &&
-            <CardAndMapView checkins={checkins} />
-        }
-    </CheckinsContextProvider>
-);
+    public render = () => {
+        return (
+            <div>
+                <Header>Recently spotted</Header>
+                {this.state.checkins.length > 0 &&
+                    <Box>
+                        <CardBox>
+                            <CheckinCard details={this.state.selected} />
+                        </CardBox>
+                        <MapBox>
+                            <Google checkins={this.state.checkins} selected={this.selectedDetails} />
+                        </MapBox>
+                    </Box>
+                }
+            </div>
+        );
+    }
 
-const CardAndMapView: FunctionComponent<CheckinsExpecting> = ({ checkins }) => (
-    <Box>
-        <CardBox>
-            <CheckinCard />
-        </CardBox>
-        <MapBox>
-            <Google checkins={checkins} />
-        </MapBox>
-    </Box>
-);
+    public componentDidMount = () => {
+        fetchCheckins().then((checkins) => this.setState({ checkins }));
+    }
 
-export default fetchCheckinsEnhancer(CheckinsSection);
+    // MARK: - Private
+
+    private selectedDetails = (details: CheckinDetails) => {
+        this.setState({ selected: details });
+    }
+}
+
+export default Checkins;

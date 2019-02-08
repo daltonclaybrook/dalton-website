@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import styled from 'styled-components';
 import Checkin from '../../models/Checkin';
 import CheckinDetails from '../../models/CheckinDetails';
@@ -9,6 +9,7 @@ const Map = styled.div`
 
 interface GoogleProps {
     checkins: Checkin[];
+    selected: (details: CheckinDetails) => void;
 }
 
 interface GoogleState {
@@ -19,9 +20,10 @@ interface GoogleState {
 type PlacesService = google.maps.places.PlacesService;
 type Marker = google.maps.Marker;
 
-class Google extends React.Component<GoogleProps, GoogleState> {
+class Google extends Component<GoogleProps, GoogleState> {
     private map?: google.maps.Map = undefined;
     private markers: Marker[] = [];
+    private hasLoadedMarkers = false;
 
     constructor(props: GoogleProps) {
         super(props);
@@ -56,7 +58,7 @@ class Google extends React.Component<GoogleProps, GoogleState> {
 
     private createMapIfNecessary = () => {
         // bounce if google is not initialized
-        if (!this.state.hasGoogleLoaded) { return; }
+        if (!this.state.hasGoogleLoaded || this.map) { return; }
         console.log('creating map...');
 
         const node = this.state.mapRef.current;
@@ -67,17 +69,22 @@ class Google extends React.Component<GoogleProps, GoogleState> {
 
     private updateMapIfNecessary = () => {
         // bounce if map or google doesn't exist
-        if (!this.map || !this.state.hasGoogleLoaded) { return; }
+        if (!this.map || !this.state.hasGoogleLoaded || this.hasLoadedMarkers) { return; }
         console.log('updating map...');
+        this.hasLoadedMarkers = true;
         this.markers.forEach((m) => m.setMap(null));
         this.markers = [];
 
         const { checkins } = this.props;
         const service = new google.maps.places.PlacesService(this.map);
 
-        checkins.forEach((checkin) => {
+        checkins.forEach((checkin, index) => {
             this.fetchPlaceId(checkin, service)
                 .then(this.fetchPlaceDetails(checkin, service))
+                .then((details) => {
+                    if (index === 0) { this.props.selected(details); }
+                    return details;
+                })
                 .then(this.createMarker)
                 .then((marker) => {
                     this.markers.push(marker);
@@ -98,6 +105,7 @@ class Google extends React.Component<GoogleProps, GoogleState> {
             console.log(`click: ${details.name}`);
         });
         marker.addListener('mouseover', () => {
+            this.props.selected(details);
             console.log(`mouseover: ${details.name}`);
         });
         marker.addListener('mouseout', () => {

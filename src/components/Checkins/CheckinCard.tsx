@@ -1,12 +1,16 @@
 import React, { FunctionComponent } from 'react';
-import { CheckinsContextConsumer } from './CheckinsContext';
+import CheckinDetails from '../../models/CheckinDetails';
 
-const CheckinCard: FunctionComponent = () => (
-    <CheckinsContextConsumer>
-        {(context) => context.selected && (
-            <h3>{context.selected.name}</h3>
-        )}
-    </CheckinsContextConsumer>
+interface DetailsExpecting {
+    details?: CheckinDetails;
+}
+
+const CheckinCard: FunctionComponent<DetailsExpecting> = ({ details }) => (
+    <div>
+        {details &&
+            <h3>{details.name}</h3>
+        }
+    </div>
 );
 
 export default CheckinCard;
