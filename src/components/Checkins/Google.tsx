@@ -4,6 +4,8 @@ import { makeTimeString } from '../../business/time';
 import Checkin from '../../models/Checkin';
 import CheckinDetails from '../../models/CheckinDetails';
 
+const unselectedMarkerOpacity = 0.5;
+
 const Map = styled.div`
     height: 100%;
 `;
@@ -98,17 +100,17 @@ class Google extends Component<GoogleProps, GoogleState> {
         this.fetchPlaceId(checkin, service)
             .then(this.fetchPlaceDetails(checkin, service))
             .then((details) => {
-                if (index < returnSelected) {
-                    returnSelected = index;
-                    this.props.selected(details);
-                }
-                return details;
-            })
-            .then((details) => {
                 if (this.markers.length >= maxMarkers) { return; }
                 const marker = this.createMarker(details);
+                marker.setOpacity(unselectedMarkerOpacity);
+
                 this.markers.push(marker);
                 this.fitMapBoundsToMarkers(this.markers);
+
+                if (index < returnSelected) {
+                    returnSelected = index;
+                    this.setMarkerSelected(marker, details);
+                }
             })
             // delay each fetch due to google OVER_QUERY_LIMIT error
             .then(this.delay(500))
@@ -133,7 +135,7 @@ class Google extends Component<GoogleProps, GoogleState> {
             animation: google.maps.Animation.DROP,
         });
         marker.addListener('click', () => {
-            this.props.selected(details);
+            this.setMarkerSelected(marker, details);
             console.log(`click: ${details.name}`);
         });
         marker.addListener('mouseover', () => {
@@ -143,6 +145,14 @@ class Google extends Component<GoogleProps, GoogleState> {
             console.log(`mouseout: ${details.name}`);
         });
         return marker;
+    }
+
+    private setMarkerSelected = (marker: Marker, details: CheckinDetails) => {
+        this.props.selected(details);
+        this.markers.forEach((m) => {
+            const opacity = marker === m ? 1.0 : unselectedMarkerOpacity;
+            m.setOpacity(opacity);
+        });
     }
 
     private fitMapBoundsToMarkers = (markers: Marker[]) => {
@@ -162,8 +172,7 @@ class Google extends Component<GoogleProps, GoogleState> {
                 locationBias: new google.maps.LatLng(checkin.location.lat, checkin.location.long),
             }, (results, status) => {
                 if (status !== google.maps.places.PlacesServiceStatus.OK) {
-                    reject(`bad place id response for checkin: ${checkin.venueName}`);
-                    return;
+                    return reject(`bad place id response for checkin: ${checkin.venueName}`);
                 }
                 const closest = this.closestPlace(checkin, results);
                 if (closest) {
@@ -206,8 +215,7 @@ class Google extends Component<GoogleProps, GoogleState> {
                 fields: ['formatted_address', 'geometry', 'icon', 'photo', 'url', 'website'],
             }, (place, status) => {
                 if (status !== google.maps.places.PlacesServiceStatus.OK || !place) {
-                    reject(`bad details response for checkin: ${checkin.venueName}, status: ${status}`);
-                    return;
+                    return reject(`bad details response for checkin: ${checkin.venueName}, status: ${status}`);
                 }
 
                 const details: CheckinDetails = {
