@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import { makeTimeString } from '../../business/time';
 import Checkin from '../../models/Checkin';
 import CheckinDetails from '../../models/CheckinDetails';
 
@@ -47,6 +48,10 @@ class Google extends Component<GoogleProps, GoogleState> {
     public componentDidMount = () => {
         this.createMapIfNecessary();
         this.updateMapIfNecessary();
+    }
+
+    public shouldComponentUpdate = (nextProps: GoogleProps, nextState: GoogleState): boolean => {
+        return this.map !== undefined && this.state.hasGoogleLoaded && !this.hasLoadedMarkers;
     }
 
     // MARK: - Private
@@ -128,10 +133,10 @@ class Google extends Component<GoogleProps, GoogleState> {
             animation: google.maps.Animation.DROP,
         });
         marker.addListener('click', () => {
+            this.props.selected(details);
             console.log(`click: ${details.name}`);
         });
         marker.addListener('mouseover', () => {
-            this.props.selected(details);
             console.log(`mouseover: ${details.name}`);
         });
         marker.addListener('mouseout', () => {
@@ -210,7 +215,7 @@ class Google extends Component<GoogleProps, GoogleState> {
                     lat: place.geometry.location.lat(),
                     long: place.geometry.location.lng(),
                     address: place.formatted_address,
-                    dateString: 'todo', // make me pretty
+                    dateString: makeTimeString(checkin.createdAt),
                     linkURL: place.website || place.url,
                     photos: place.photos.map((p) => p.getUrl({})),
                     stickerImageURL: checkin.imageURL,
