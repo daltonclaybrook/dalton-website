@@ -2,13 +2,13 @@ import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
 import CheckinDetails from '../../models/CheckinDetails';
 
+const Card = styled.div`
+    padding: 0 1rem;
+`;
+
 const Sticker = styled.img`
     width: 3rem;
     height: 3rem;
-`;
-
-const Card = styled.div`
-    padding: 0 1rem;
 `;
 
 interface DetailsExpecting {
