@@ -16,8 +16,7 @@ const makeFullDateString = (date: Date): string => {
     return `${day} ${month} ${dayNum} at ${hours}:${minuteString} ${ampm}`;
 };
 
-export const makeTimeString = (timestamp: number): string => {
-    const now = new Date();
+export const makeTimeString = (timestamp: number, now: Date = new Date()): string => {
     const date = new Date(timestamp * 1000);
     const diffSeconds = (now.getTime() - date.getTime()) / 1000;
 
