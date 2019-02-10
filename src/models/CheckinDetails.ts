@@ -5,7 +5,7 @@ interface CheckinDetails {
     address: string;
     dateString: string;
     linkURL?: string;
-    photoURL?: string;
+    photos: string[];
     stickerImageURL?: string;
 }
 

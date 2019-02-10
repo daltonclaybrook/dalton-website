@@ -15,7 +15,6 @@ const Box = styled.div`
 
 const CardBox = styled.div`
     flex: 30%;
-    padding: 0 1rem;
     border: solid 1px darkgray;
 `;
 

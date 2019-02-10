@@ -18,6 +18,7 @@ interface GoogleState {
 }
 
 type PlacesService = google.maps.places.PlacesService;
+type PlaceResult = google.maps.places.PlaceResult;
 type Marker = google.maps.Marker;
 
 class Google extends Component<GoogleProps, GoogleState> {
@@ -77,20 +78,44 @@ class Google extends Component<GoogleProps, GoogleState> {
 
         const { checkins } = this.props;
         const service = new google.maps.places.PlacesService(this.map);
+        this.recursiveFetchPlace(0, Number.MAX_SAFE_INTEGER, checkins, service);
+    }
 
-        checkins.forEach((checkin, index) => {
-            this.fetchPlaceId(checkin, service)
-                .then(this.fetchPlaceDetails(checkin, service))
-                .then((details) => {
-                    if (index === 0) { this.props.selected(details); }
-                    return details;
-                })
-                .then(this.createMarker)
-                .then((marker) => {
-                    this.markers.push(marker);
-                    this.fitMapBoundsToMarkers(this.markers);
-                })
-                .catch((reason) => console.log(reason));
+    private recursiveFetchPlace = (index: number, selectedIndex: number, checkins: Checkin[], service: PlacesService) => {
+        const maxMarkers = 3;
+        if (checkins.length <= index || this.markers.length >= maxMarkers) {
+            console.log('done fetching.');
+            return;
+        }
+
+        const checkin = checkins[index];
+        let returnSelected = selectedIndex;
+        this.fetchPlaceId(checkin, service)
+            .then(this.fetchPlaceDetails(checkin, service))
+            .then((details) => {
+                if (index < returnSelected) {
+                    returnSelected = index;
+                    this.props.selected(details);
+                }
+                return details;
+            })
+            .then((details) => {
+                if (this.markers.length >= maxMarkers) { return; }
+                const marker = this.createMarker(details);
+                this.markers.push(marker);
+                this.fitMapBoundsToMarkers(this.markers);
+            })
+            // delay each fetch due to google OVER_QUERY_LIMIT error
+            .then(this.delay(500))
+            .catch((reason) => console.log(reason))
+            .finally(() => {
+                this.recursiveFetchPlace(index + 1, returnSelected, checkins, service);
+            });
+    }
+
+    private delay = (milliseconds: number) => (): Promise<void> => {
+        return new Promise((resolve) => {
+            window.setTimeout(() => resolve(), milliseconds);
         });
     }
 
@@ -100,6 +125,7 @@ class Google extends Component<GoogleProps, GoogleState> {
             title: details.name,
             position,
             map: this.map,
+            animation: google.maps.Animation.DROP,
         });
         marker.addListener('click', () => {
             console.log(`click: ${details.name}`);
@@ -127,16 +153,45 @@ class Google extends Component<GoogleProps, GoogleState> {
         return new Promise((resolve, reject) => {
             service.findPlaceFromQuery({
                 query: checkin.venueName,
-                fields: ['place_id'],
+                fields: ['place_id', 'geometry'],
                 locationBias: new google.maps.LatLng(checkin.location.lat, checkin.location.long),
             }, (results, status) => {
-                if (status !== google.maps.places.PlacesServiceStatus.OK || results.length < 1) {
+                if (status !== google.maps.places.PlacesServiceStatus.OK) {
                     reject(`bad place id response for checkin: ${checkin.venueName}`);
+                    return;
+                }
+                const closest = this.closestPlace(checkin, results);
+                if (closest) {
+                    resolve(closest.place_id);
                 } else {
-                    resolve(results[0].place_id);
+                    reject(`no close results for checkin: ${checkin.venueName}`);
                 }
             });
         });
+    }
+
+    private closestPlace = (checkin: Checkin, results: PlaceResult[]): PlaceResult | null => {
+        let closest: PlaceResult | null = null;
+        let closestDiff = Number.MAX_SAFE_INTEGER;
+        results.forEach((r) => {
+            const lat = r.geometry.location.lat();
+            const long = r.geometry.location.lng();
+            const diff = this.difference({ lat, long }, checkin.location);
+            if (diff < closestDiff) {
+                closest = r;
+                closestDiff = diff;
+            }
+        });
+
+        // approx 1/2 mile latitude.
+        const threshold = 1.0 / 140.0;
+        return closestDiff <= threshold ? closest : null;
+    }
+
+    private difference = (loc1: { lat: number, long: number }, loc2: { lat: number, long: number }): number => {
+        const latDiff = Math.abs(loc1.lat - loc2.lat);
+        const longDiff = Math.abs(loc1.long - loc2.long);
+        return (latDiff + longDiff) / 2;
     }
 
     private fetchPlaceDetails = (checkin: Checkin, service: PlacesService) => (placeId: string): Promise<CheckinDetails> => {
@@ -146,12 +201,8 @@ class Google extends Component<GoogleProps, GoogleState> {
                 fields: ['formatted_address', 'geometry', 'icon', 'photo', 'url', 'website'],
             }, (place, status) => {
                 if (status !== google.maps.places.PlacesServiceStatus.OK || !place) {
-                    reject(`bad details response for checkin: ${checkin.venueName}`);
-                }
-
-                let photoURL: (string|undefined);
-                if (place.photos.length > 0) {
-                    photoURL = place.photos[0].getUrl({});
+                    reject(`bad details response for checkin: ${checkin.venueName}, status: ${status}`);
+                    return;
                 }
 
                 const details: CheckinDetails = {
@@ -161,7 +212,7 @@ class Google extends Component<GoogleProps, GoogleState> {
                     address: place.formatted_address,
                     dateString: 'todo', // make me pretty
                     linkURL: place.website || place.url,
-                    photoURL,
+                    photos: place.photos.map((p) => p.getUrl({})),
                     stickerImageURL: checkin.imageURL,
                 };
                 resolve(details);
