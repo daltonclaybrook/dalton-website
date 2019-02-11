@@ -25,7 +25,7 @@ const MapBox = styled.div`
 interface CheckinsBoxProps {
     checkins: Checkin[];
     selected: CheckinDetails|undefined;
-    selectedDetails(details: CheckinDetails): void;
+    setSelected(details: CheckinDetails): void;
 }
 
 const Checkins: FunctionComponent = () => {
@@ -34,10 +34,11 @@ const Checkins: FunctionComponent = () => {
     useEffect(() => {
         fetchCheckins().then(setCheckins);
     }, []);
-    return <CheckinsBox checkins={checkins} selected={selected} selectedDetails={setSelected} />;
+    const props = { checkins, selected, setSelected };
+    return <CheckinsBox {...props} />;
 };
 
-const CheckinsBox: FunctionComponent<CheckinsBoxProps> = ({ checkins, selected, selectedDetails }) => (
+const CheckinsBox: FunctionComponent<CheckinsBoxProps> = ({ checkins, selected, setSelected }) => (
     <div>
         <Header>Recently spotted</Header>
         {checkins.length > 0 &&
@@ -46,7 +47,7 @@ const CheckinsBox: FunctionComponent<CheckinsBoxProps> = ({ checkins, selected, 
                     <CheckinCard details={selected} />
                 </CardBox>
                 <MapBox>
-                    <GoogleMap checkins={checkins} selected={selectedDetails} />
+                    <GoogleMap checkins={checkins} selected={setSelected} />
                 </MapBox>
             </Box>
         }
