@@ -24,7 +24,7 @@ type PlacesService = google.maps.places.PlacesService;
 type PlaceResult = google.maps.places.PlaceResult;
 type Marker = google.maps.Marker;
 
-class Google extends Component<GoogleProps, GoogleState> {
+class GoogleMap extends Component<GoogleProps, GoogleState> {
     private map?: google.maps.Map = undefined;
     private markers: Marker[] = [];
     private hasLoadedMarkers = false;
@@ -225,4 +225,4 @@ class Google extends Component<GoogleProps, GoogleState> {
     }
 }
 
-export default Google;
+export default GoogleMap;

@@ -5,7 +5,7 @@ import CheckinDetails from '../../models/CheckinDetails';
 import Header from '../shared/Header';
 import { fetchCheckins } from './api';
 import CheckinCard from './CheckinCard';
-import Google from './Google';
+import GoogleMap from './GoogleMap';
 
 const Box = styled.div`
     display: flex;
@@ -46,7 +46,7 @@ const CheckinsBox: FunctionComponent<CheckinsBoxProps> = ({ checkins, selected, 
                     <CheckinCard details={selected} />
                 </CardBox>
                 <MapBox>
-                    <Google checkins={checkins} selected={selectedDetails} />
+                    <GoogleMap checkins={checkins} selected={selectedDetails} />
                 </MapBox>
             </Box>
         }
