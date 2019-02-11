@@ -21,13 +21,6 @@ const AppWrapper = styled.div`
   font-family: 'Roboto Mono', monospace;
 `;
 
-// Shake shack
-const googleProps = {
-  lat: 40.78067635406833,
-  long: -73.9764431673722,
-  zoom: 16,
-};
-
 class App extends Component {
   public render() {
     return (

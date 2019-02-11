@@ -134,16 +134,7 @@ class Google extends Component<GoogleProps, GoogleState> {
             map: this.map,
             animation: google.maps.Animation.DROP,
         });
-        marker.addListener('click', () => {
-            this.setMarkerSelected(marker, details);
-            console.log(`click: ${details.name}`);
-        });
-        marker.addListener('mouseover', () => {
-            console.log(`mouseover: ${details.name}`);
-        });
-        marker.addListener('mouseout', () => {
-            console.log(`mouseout: ${details.name}`);
-        });
+        marker.addListener('click', () => this.setMarkerSelected(marker, details));
         return marker;
     }
 

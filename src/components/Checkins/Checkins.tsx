@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Checkin from '../../models/Checkin';
 import CheckinDetails from '../../models/CheckinDetails';
@@ -22,44 +22,35 @@ const MapBox = styled.div`
     flex: 70%;
 `;
 
-interface CheckinsState {
+interface CheckinsBoxProps {
     checkins: Checkin[];
-    selected?: CheckinDetails;
+    selected: CheckinDetails|undefined;
+    selectedDetails(details: CheckinDetails): void;
 }
 
-class Checkins extends Component<any, CheckinsState> {
-    constructor(props: any) {
-        super(props);
-        this.state = { checkins: [] };
-    }
+const Checkins: FunctionComponent = () => {
+    const [checkins, setCheckins] = useState<Checkin[]>([]);
+    const [selected, setSelected] = useState<CheckinDetails|undefined>(undefined);
+    useEffect(() => {
+        fetchCheckins().then(setCheckins);
+    }, []);
+    return <CheckinsBox checkins={checkins} selected={selected} selectedDetails={setSelected} />;
+};
 
-    public render = () => {
-        return (
-            <div>
-                <Header>Recently spotted</Header>
-                {this.state.checkins.length > 0 &&
-                    <Box>
-                        <CardBox>
-                            <CheckinCard details={this.state.selected} />
-                        </CardBox>
-                        <MapBox>
-                            <Google checkins={this.state.checkins} selected={this.selectedDetails} />
-                        </MapBox>
-                    </Box>
-                }
-            </div>
-        );
-    }
-
-    public componentDidMount = () => {
-        fetchCheckins().then((checkins) => this.setState({ checkins }));
-    }
-
-    // MARK: - Private
-
-    private selectedDetails = (details: CheckinDetails) => {
-        this.setState({ selected: details });
-    }
-}
+const CheckinsBox: FunctionComponent<CheckinsBoxProps> = ({ checkins, selected, selectedDetails }) => (
+    <div>
+        <Header>Recently spotted</Header>
+        {checkins.length > 0 &&
+            <Box>
+                <CardBox>
+                    <CheckinCard details={selected} />
+                </CardBox>
+                <MapBox>
+                    <Google checkins={checkins} selected={selectedDetails} />
+                </MapBox>
+            </Box>
+        }
+    </div>
+);
 
 export default Checkins;
