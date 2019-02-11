@@ -42,7 +42,10 @@ def lambda_handler(event, context):
     response = json.load(urllib.request.urlopen(url))
     items = response['response']['checkins']['items']
     checkins = list(map(lambda dict: Checkin(dict).__dict__, items))
-    output = { 'data': checkins[:3] }
+    
+    count = int(os.environ['RESULT_COUNT'])
+    count = count if count > 0 else 10
+    output = { 'data': checkins[:count] }
     
     return {
         'statusCode': 200,

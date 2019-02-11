@@ -3,10 +3,16 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Links from './Links';
 
-const Avatar = styled.img`
+interface SizeExpecting {
+    size: number;
+}
+
+const Avatar = styled.img<SizeExpecting>`
     display: block;
     margin: auto;
     border-radius: 50%;
+    width: ${(p) => p.size}px;
+    height: ${(p) => p.size}px;
 `;
 
 const Heading = styled.h1`
@@ -35,7 +41,7 @@ const enhancer = (Component: FunctionComponent) => () => {
 
 const Bio: FunctionComponent = () => (
     <div className="bio">
-        <Avatar src="https://gravatar.com/avatar/409d9fd7356a2876a35dcd461713d749?s=350" />
+        <Avatar size={350} src="https://gravatar.com/avatar/409d9fd7356a2876a35dcd461713d749?s=700" />
         <Heading>Hi, I'm Dalton.</Heading>
         <Links />
         <div id={BIOID} />

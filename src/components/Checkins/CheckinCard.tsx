@@ -1,10 +1,36 @@
 import React, { FunctionComponent } from 'react';
-import Checkin from '../../models/Checkin';
+import styled from 'styled-components';
+import CheckinDetails from '../../models/CheckinDetails';
 
-const CheckinCard: FunctionComponent<Checkin> = (checkin) => (
-    <div className="checkin">
-        <h3>{checkin.venueName}</h3>
-        {/* <h4>{checkin.createdAt.toDateString()}</h4> */}
+const Card = styled.div`
+    padding: 0 1rem;
+`;
+
+const Sticker = styled.img`
+    width: 3rem;
+    height: 3rem;
+`;
+
+interface DetailsExpecting {
+    details: CheckinDetails;
+}
+
+const CheckinCard: FunctionComponent<Partial<DetailsExpecting>> = ({ details }) => (
+    <Card>
+        {details &&
+            <DetailsView details={details} />
+        }
+    </Card>
+);
+
+const DetailsView: FunctionComponent<DetailsExpecting> = ({ details }) => (
+    <div>
+        <a href={details.linkURL}><h3>{details.name}</h3></a>
+        <p>{details.dateString}</p>
+        {details.stickerImageURL &&
+            <Sticker src={details.stickerImageURL} />
+        }
+        <p>{details.address}</p>
     </div>
 );
 

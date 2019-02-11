@@ -8,7 +8,7 @@ interface Location {
 interface Checkin {
     id: string;
     venueName: string;
-    createdAt: Date;
+    createdAt: number;
     imageURL?: string;
     location: Location;
 }
