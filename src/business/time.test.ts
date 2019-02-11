@@ -2,6 +2,14 @@ import { makeTimeString } from './time';
 
 const now = new Date(0);
 
+beforeAll(() => {
+    Date.prototype.getDay = Date.prototype.getUTCDay;
+    Date.prototype.getMonth = Date.prototype.getUTCMonth;
+    Date.prototype.getDate = Date.prototype.getUTCDate;
+    Date.prototype.getHours = Date.prototype.getUTCHours;
+    Date.prototype.getMinutes = Date.prototype.getUTCMinutes;
+});
+
 describe('few minutes', () => {
     it('is recent for zero', () => {
         const subject = makeTimeString(0, now);
@@ -58,6 +66,6 @@ describe('hours', () => {
 describe('full date', () => {
     it('returns correct date string', () => {
         const subject = makeTimeString(-100000, now);
-        expect(subject).toEqual('Tue Dec 30 at 3:13 pm');
+        expect(subject).toEqual('Tue Dec 30 at 8:13 pm');
     });
 });
