@@ -47,7 +47,7 @@ const CheckinsBox: FunctionComponent<CheckinsBoxProps> = ({ checkins, selected, 
                     <CheckinCard details={selected} />
                 </CardBox>
                 <MapBox>
-                    <GoogleMap checkins={checkins} selected={setSelected} />
+                    <GoogleMap checkins={checkins} setSelected={setSelected} />
                 </MapBox>
             </Box>
         }

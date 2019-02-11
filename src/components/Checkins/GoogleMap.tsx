@@ -10,12 +10,12 @@ const Map = styled.div`
     height: 100%;
 `;
 
-interface GoogleProps {
+interface GoogleMapProps {
     checkins: Checkin[];
-    selected: (details: CheckinDetails) => void;
+    setSelected(details: CheckinDetails): void;
 }
 
-interface GoogleState {
+interface GoogleMapState {
     hasGoogleLoaded: boolean;
     mapRef: React.RefObject<HTMLDivElement>;
 }
@@ -24,12 +24,12 @@ type PlacesService = google.maps.places.PlacesService;
 type PlaceResult = google.maps.places.PlaceResult;
 type Marker = google.maps.Marker;
 
-class GoogleMap extends Component<GoogleProps, GoogleState> {
+class GoogleMap extends Component<GoogleMapProps, GoogleMapState> {
     private map?: google.maps.Map = undefined;
     private markers: Marker[] = [];
     private hasLoadedMarkers = false;
 
-    constructor(props: GoogleProps) {
+    constructor(props: GoogleMapProps) {
         super(props);
         window.googleInit = this.googleInit;
         this.state = {
@@ -52,7 +52,7 @@ class GoogleMap extends Component<GoogleProps, GoogleState> {
         this.updateMapIfNecessary();
     }
 
-    public shouldComponentUpdate = (nextProps: GoogleProps, nextState: GoogleState): boolean => {
+    public shouldComponentUpdate = (nextProps: GoogleMapProps, nextState: GoogleMapState): boolean => {
         return this.map !== undefined && this.state.hasGoogleLoaded && !this.hasLoadedMarkers;
     }
 
@@ -139,7 +139,7 @@ class GoogleMap extends Component<GoogleProps, GoogleState> {
     }
 
     private setMarkerSelected = (marker: Marker, details: CheckinDetails) => {
-        this.props.selected(details);
+        this.props.setSelected(details);
         this.markers.forEach((m) => {
             const opacity = marker === m ? 1.0 : unselectedMarkerOpacity;
             m.setOpacity(opacity);
