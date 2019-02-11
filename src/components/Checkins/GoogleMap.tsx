@@ -27,7 +27,6 @@ type Marker = google.maps.Marker;
 class GoogleMap extends Component<GoogleMapProps, GoogleMapState> {
     private map?: google.maps.Map = undefined;
     private markers: Marker[] = [];
-    private hasLoadedMarkers = false;
 
     constructor(props: GoogleMapProps) {
         super(props);
@@ -43,13 +42,19 @@ class GoogleMap extends Component<GoogleMapProps, GoogleMapState> {
     }
 
     public componentDidUpdate = () => {
-        this.createMapIfNecessary();
-        this.updateMapIfNecessary();
+        this.createMap();
+        this.updateMap();
     }
 
     public componentDidMount = () => {
-        this.createMapIfNecessary();
-        this.updateMapIfNecessary();
+        if (this.state.hasGoogleLoaded) {
+            this.createMap();
+            this.updateMap();
+        }
+    }
+
+    public shouldComponentUpdate = (nextProps: GoogleMapProps, nextState: GoogleMapState) => {
+        return nextState.hasGoogleLoaded && !this.state.hasGoogleLoaded;
     }
 
     // MARK: - Private
@@ -59,22 +64,15 @@ class GoogleMap extends Component<GoogleMapProps, GoogleMapState> {
         this.setState({ hasGoogleLoaded: true });
     }
 
-    private createMapIfNecessary = () => {
-        // bounce if google is not initialized
-        if (!this.state.hasGoogleLoaded || this.map) { return; }
-        console.log('creating map...');
-
+    private createMap = () => {
         const node = this.state.mapRef.current;
         if (node) {
             this.map = new google.maps.Map(node);
         }
     }
 
-    private updateMapIfNecessary = () => {
-        // bounce if map or google doesn't exist
-        if (!this.map || !this.state.hasGoogleLoaded || this.hasLoadedMarkers) { return; }
-        console.log('updating map...');
-        this.hasLoadedMarkers = true;
+    private updateMap = () => {
+        if (!this.map) { return; }
         this.markers.forEach((m) => m.setMap(null));
         this.markers = [];
 
@@ -86,7 +84,6 @@ class GoogleMap extends Component<GoogleMapProps, GoogleMapState> {
     private recursiveFetchPlace = (index: number, selectedIndex: number, checkins: Checkin[], service: PlacesService) => {
         const maxMarkers = 3;
         if (checkins.length <= index || this.markers.length >= maxMarkers) {
-            console.log('done fetching.');
             return;
         }
 
