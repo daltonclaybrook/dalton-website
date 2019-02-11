@@ -55,7 +55,6 @@ class GoogleMap extends Component<GoogleMapProps, GoogleMapState> {
     // MARK: - Private
 
     private googleInit = () => {
-        console.log('google init in component');
         window.hasGoogleLoaded = true;
         this.setState({ hasGoogleLoaded: true });
     }
