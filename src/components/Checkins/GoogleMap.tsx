@@ -20,9 +20,9 @@ interface GoogleMapState {
     mapRef: React.RefObject<HTMLDivElement>;
 }
 
+type Marker = google.maps.Marker;
 type PlacesService = google.maps.places.PlacesService;
 type PlaceResult = google.maps.places.PlaceResult;
-type Marker = google.maps.Marker;
 
 class GoogleMap extends Component<GoogleMapProps, GoogleMapState> {
     private map?: google.maps.Map = undefined;
