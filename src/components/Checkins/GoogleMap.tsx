@@ -116,6 +116,55 @@ class GoogleMap extends Component<GoogleMapProps, GoogleMapState> {
             });
     }
 
+    // MARK: - Fetching
+
+    private fetchPlaceId = (checkin: Checkin, service: PlacesService): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            service.findPlaceFromQuery({
+                query: checkin.venueName,
+                fields: ['place_id', 'geometry'],
+                locationBias: new google.maps.LatLng(checkin.location.lat, checkin.location.long),
+            }, (results, status) => {
+                if (status !== google.maps.places.PlacesServiceStatus.OK) {
+                    return reject(`bad place id response for checkin: ${checkin.venueName}`);
+                }
+                const closest = this.closestPlace(checkin, results);
+                if (closest) {
+                    resolve(closest.place_id);
+                } else {
+                    reject(`no close results for checkin: ${checkin.venueName}`);
+                }
+            });
+        });
+    }
+
+    private fetchPlaceDetails = (checkin: Checkin, service: PlacesService) => (placeId: string): Promise<CheckinDetails> => {
+        return new Promise((resolve, reject) => {
+            service.getDetails({
+                placeId,
+                fields: ['formatted_address', 'geometry', 'icon', 'photo', 'url', 'website'],
+            }, (place, status) => {
+                if (status !== google.maps.places.PlacesServiceStatus.OK || !place) {
+                    return reject(`bad details response for checkin: ${checkin.venueName}, status: ${status}`);
+                }
+
+                const details: CheckinDetails = {
+                    name: checkin.venueName,
+                    lat: place.geometry.location.lat(),
+                    long: place.geometry.location.lng(),
+                    address: place.formatted_address,
+                    dateString: makeTimeString(checkin.createdAt),
+                    linkURL: place.website || place.url,
+                    photos: place.photos.map((p) => p.getUrl({})),
+                    stickerImageURL: checkin.imageURL,
+                };
+                resolve(details);
+            });
+        });
+    }
+
+    // MARK: - Helpers
+
     private delay = (milliseconds: number) => (): Promise<void> => {
         return new Promise((resolve) => {
             window.setTimeout(() => resolve(), milliseconds);
@@ -151,26 +200,6 @@ class GoogleMap extends Component<GoogleMapProps, GoogleMapState> {
         this.map.fitBounds(bounds);
     }
 
-    private fetchPlaceId = (checkin: Checkin, service: PlacesService): Promise<string> => {
-        return new Promise((resolve, reject) => {
-            service.findPlaceFromQuery({
-                query: checkin.venueName,
-                fields: ['place_id', 'geometry'],
-                locationBias: new google.maps.LatLng(checkin.location.lat, checkin.location.long),
-            }, (results, status) => {
-                if (status !== google.maps.places.PlacesServiceStatus.OK) {
-                    return reject(`bad place id response for checkin: ${checkin.venueName}`);
-                }
-                const closest = this.closestPlace(checkin, results);
-                if (closest) {
-                    resolve(closest.place_id);
-                } else {
-                    reject(`no close results for checkin: ${checkin.venueName}`);
-                }
-            });
-        });
-    }
-
     private closestPlace = (checkin: Checkin, results: PlaceResult[]): PlaceResult | null => {
         let closest: PlaceResult | null = null;
         let closestDiff = Number.MAX_SAFE_INTEGER;
@@ -193,31 +222,6 @@ class GoogleMap extends Component<GoogleMapProps, GoogleMapState> {
         const latDiff = Math.abs(loc1.lat - loc2.lat);
         const longDiff = Math.abs(loc1.long - loc2.long);
         return (latDiff + longDiff) / 2;
-    }
-
-    private fetchPlaceDetails = (checkin: Checkin, service: PlacesService) => (placeId: string): Promise<CheckinDetails> => {
-        return new Promise((resolve, reject) => {
-            service.getDetails({
-                placeId,
-                fields: ['formatted_address', 'geometry', 'icon', 'photo', 'url', 'website'],
-            }, (place, status) => {
-                if (status !== google.maps.places.PlacesServiceStatus.OK || !place) {
-                    return reject(`bad details response for checkin: ${checkin.venueName}, status: ${status}`);
-                }
-
-                const details: CheckinDetails = {
-                    name: checkin.venueName,
-                    lat: place.geometry.location.lat(),
-                    long: place.geometry.location.lng(),
-                    address: place.formatted_address,
-                    dateString: makeTimeString(checkin.createdAt),
-                    linkURL: place.website || place.url,
-                    photos: place.photos.map((p) => p.getUrl({})),
-                    stickerImageURL: checkin.imageURL,
-                };
-                resolve(details);
-            });
-        });
     }
 }
 
