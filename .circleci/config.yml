@@ -31,7 +31,7 @@ jobs:
       - run: yarn test
 
       # create an optimized production build
-      - run: echo $REACT_APP_MAPS_KEY && yarn build
+      - run: yarn build
 
       # move files into a shared workspace
       - run: mkdir -p workspace
