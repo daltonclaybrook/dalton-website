@@ -52,10 +52,6 @@ class GoogleMap extends Component<GoogleMapProps, GoogleMapState> {
         this.updateMapIfNecessary();
     }
 
-    public shouldComponentUpdate = (nextProps: GoogleMapProps, nextState: GoogleMapState): boolean => {
-        return this.map !== undefined && this.state.hasGoogleLoaded && !this.hasLoadedMarkers;
-    }
-
     // MARK: - Private
 
     private googleInit = () => {
