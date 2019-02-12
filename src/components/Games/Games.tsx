@@ -9,25 +9,23 @@ const Game = styled.iframe`
     border-width: thin;
 `;
 
-type MatchBlock<U> = (matches: boolean) => U;
-
-interface MediaQueryExpecting<T> {
-    match: T;
+interface WidthExpecting {
+    width: number;
 }
 
-const MediaQueryComponent = <T, U extends MediaQueryExpecting<T>>(Component: FunctionComponent<U>, query: string, matches: MatchBlock<T>) => (props: Exclude<U, MediaQueryExpecting<T>>) => {
-    const mediaQuery = window.matchMedia(query);
-    const matchValueFromMQ = (mq: MediaQueryList|MediaQueryListEvent) => matches(mq.matches);
-    const [matchValue, setMatchValue] = useState<T>(matchValueFromMQ(mediaQuery));
-    mediaQuery.addListener((mq) => setMatchValue(matchValueFromMQ(mq)));
-    return <Component match={matchValue} {...props} />;
+const GamesMediaQuery = () => {
+    const mediaQuery = window.matchMedia('(max-width: 700px)');
+    const widthFromMQ = (mq: MediaQueryList|MediaQueryListEvent) => mq.matches ? 354 : 552;
+    const [width, setWidth] = useState<number>(widthFromMQ(mediaQuery));
+    mediaQuery.addListener((mq) => setWidth(widthFromMQ(mq)));
+    return <Games width={width} />;
 };
 
-const Games: FunctionComponent<MediaQueryExpecting<number>> = ({ match }) => (
+const Games: FunctionComponent<WidthExpecting> = ({ width }) => (
     <div className="games">
         <Header>Games</Header>
-        <Game src="https://itch.io/embed/359750" width={match} height="167"></Game>
+        <Game src="https://itch.io/embed/359750" width={width} height="167"></Game>
     </div>
 );
 
-export default MediaQueryComponent(Games, '(max-width: 700px)', (m) => m ? 354 : 552);
+export default GamesMediaQuery;
