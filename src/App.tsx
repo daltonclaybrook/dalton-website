@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import './App.css';
 import Bio from './components/Bio';
 import Books from './components/Books';
 import Checkins from './components/Checkins';
