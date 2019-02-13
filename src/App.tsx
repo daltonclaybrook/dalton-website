@@ -17,7 +17,7 @@ declare global {
 
 const AppWrapper = styled.div`
   margin: auto;
-  max-width: ${Constants.contentMaxWidth + Constants.contentWidthPadding}rem;
+  max-width: ${Constants.contentMaxWidth + Constants.contentWidthPadding * 2}rem;
   padding: 2.625rem ${Constants.contentWidthPadding}rem;
   font-family: 'Roboto Mono', monospace;
 `;
