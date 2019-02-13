@@ -17,7 +17,7 @@ const LinksBlock = styled.div`
 const SpacedLink = styled.a`
     margin: 0rem 0.875rem;
 
-    @media (max-width: 700px) {
+    @media (max-width: 30rem) {
         margin: 0rem 0.275rem;
     }
 `;

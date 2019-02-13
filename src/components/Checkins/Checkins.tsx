@@ -7,19 +7,30 @@ import { fetchCheckins } from './api';
 import CheckinCard from './CheckinCard';
 import GoogleMap from './GoogleMap';
 
+const maxWidth = 40;
+
 const Box = styled.div`
     display: flex;
     margin: auto;
     height: 20rem;
+
+    @media (max-width: ${maxWidth}rem) {
+        flex-direction: column-reverse;
+        height: auto;
+    }
+`;
+
+const MapBox = styled.div`
+    flex: 70%;
+
+    @media (max-width: ${maxWidth}rem) {
+        height: 20rem;
+    }
 `;
 
 const CardBox = styled.div`
     flex: 30%;
     border: solid 1px darkgray;
-`;
-
-const MapBox = styled.div`
-    flex: 70%;
 `;
 
 interface CheckinsBoxProps {

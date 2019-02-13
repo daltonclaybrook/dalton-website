@@ -1,6 +1,7 @@
 import marked from 'marked';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import Constants from '../shared/Constants';
 import Links from './Links';
 
 interface SizeExpecting {
@@ -11,8 +12,12 @@ const Avatar = styled.img<SizeExpecting>`
     display: block;
     margin: auto;
     border-radius: 50%;
-    width: ${(p) => p.size}px;
-    height: ${(p) => p.size}px;
+    width: ${(p) => p.size}rem;
+    height: auto;
+
+    @media (max-width: ${(p) => (p.size + Constants.contentWidthPadding * 2)}rem) {
+        width: 100%;
+    }
 `;
 
 const Heading = styled.h1`
@@ -41,7 +46,7 @@ const enhancer = (Component: FunctionComponent) => () => {
 
 const Bio: FunctionComponent = () => (
     <div className="bio">
-        <Avatar size={350} src="https://gravatar.com/avatar/409d9fd7356a2876a35dcd461713d749?s=700" />
+        <Avatar size={22} src="https://gravatar.com/avatar/409d9fd7356a2876a35dcd461713d749?s=700" />
         <Heading>Hi, I'm Dalton.</Heading>
         <Links />
         <div id={BIOID} />

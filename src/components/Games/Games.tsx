@@ -1,17 +1,30 @@
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
+import Constants from '../../shared/Constants';
 import Header from '../shared/Header';
 
 const Game = styled.iframe`
-    border-style: solid;
-    border-width: thin;
+    width: 100%;
+    margin-bottom: 1rem;
+    border-style: none;
+    border-width: 0;
 `;
 
-const Games: FunctionComponent = () => (
+interface GameProps {
+    width: number;
+    urls: string[];
+}
+
+const Games = ({ width, urls }: GameProps): FunctionComponent => () => (
     <div className="games">
         <Header>Games</Header>
-        <Game src="https://itch.io/embed/359750" width="552" height="167"></Game>
+        {urls.map((url) => <Game src={url} width={width} key={url} />)}
     </div>
 );
 
-export default Games;
+const gameURLs = [
+    'https://itch.io/embed/359750',
+    // soon...
+];
+
+export default Games({ width: Constants.contentMaxWidth, urls: gameURLs });
