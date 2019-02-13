@@ -6,6 +6,7 @@ import Books from './components/Books';
 import Checkins from './components/Checkins';
 import Games from './components/Games';
 import Workouts from './components/Workouts';
+import Constants from './shared/Constants';
 
 declare global {
   interface Window {
@@ -16,8 +17,8 @@ declare global {
 
 const AppWrapper = styled.div`
   margin: auto;
-  max-width: 54rem;
-  padding: 2.625rem 1.3125rem;
+  max-width: ${Constants.contentMaxWidth + Constants.contentWidthPadding}rem;
+  padding: 2.625rem ${Constants.contentWidthPadding}rem;
   font-family: 'Roboto Mono', monospace;
 `;
 

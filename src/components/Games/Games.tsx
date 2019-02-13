@@ -1,31 +1,30 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
+import Constants from '../../shared/Constants';
 import Header from '../shared/Header';
 
 const Game = styled.iframe`
-    display: block;
-    margin: auto;
-    border-style: solid;
-    border-width: thin;
+    width: 100%;
+    margin-bottom: 1rem;
+    border-style: none;
+    border-width: 0;
 `;
 
-interface WidthExpecting {
+interface GameProps {
     width: number;
+    urls: string[];
 }
 
-const GamesMediaQuery = () => {
-    const mediaQuery = window.matchMedia('(max-width: 700px)');
-    const widthFromMQ = (mq: MediaQueryList|MediaQueryListEvent) => mq.matches ? 354 : 552;
-    const [width, setWidth] = useState<number>(widthFromMQ(mediaQuery));
-    mediaQuery.addListener((mq) => setWidth(widthFromMQ(mq)));
-    return <Games width={width} />;
-};
-
-const Games: FunctionComponent<WidthExpecting> = ({ width }) => (
+const Games = ({ width, urls }: GameProps): FunctionComponent => () => (
     <div className="games">
         <Header>Games</Header>
-        <Game src="https://itch.io/embed/359750" width={width} height="167"></Game>
+        {urls.map((url) => <Game src={url} width={width} />)}
     </div>
 );
 
-export default GamesMediaQuery;
+const gameURLs = [
+    'https://itch.io/embed/359750',
+    // soon...
+];
+
+export default Games({ width: Constants.contentMaxWidth, urls: gameURLs });
