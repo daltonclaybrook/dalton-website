@@ -18,7 +18,7 @@ interface GameProps {
 const Games = ({ width, urls }: GameProps): FunctionComponent => () => (
     <div className="games">
         <Header>Games</Header>
-        {urls.map((url) => <Game src={url} width={width} />)}
+        {urls.map((url) => <Game src={url} width={width} key={url} />)}
     </div>
 );
 
