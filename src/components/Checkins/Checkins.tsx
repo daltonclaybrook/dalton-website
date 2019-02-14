@@ -35,30 +35,39 @@ const CardBox = styled.div`
 
 interface CheckinsBoxProps {
     checkins: Checkin[];
-    selected: CheckinDetails|undefined;
-    setSelected(details: CheckinDetails): void;
+    selected: NewOldDetails;
+    setNewDetails(details: CheckinDetails): void;
+}
+
+interface NewOldDetails {
+    newDetails?: CheckinDetails;
+    oldDetails?: CheckinDetails;
 }
 
 const Checkins: FunctionComponent = () => {
     const [checkins, setCheckins] = useState<Checkin[]>([]);
-    const [selected, setSelected] = useState<CheckinDetails|undefined>(undefined);
+    const [selected, setSelected] = useState<NewOldDetails>({});
     useEffect(() => {
         fetchCheckins().then(setCheckins);
     }, []);
-    const props = { checkins, selected, setSelected };
+    const setNewDetails = (newDetails: CheckinDetails) => setSelected({
+        newDetails,
+        oldDetails: selected.newDetails,
+    });
+    const props = { checkins, selected, setNewDetails };
     return <CheckinsBox {...props} />;
 };
 
-const CheckinsBox: FunctionComponent<CheckinsBoxProps> = ({ checkins, selected, setSelected }) => (
+const CheckinsBox: FunctionComponent<CheckinsBoxProps> = ({ checkins, selected, setNewDetails }) => (
     <div>
         <Header>Recently spotted</Header>
         {checkins.length > 0 &&
             <Box>
                 <CardBox>
-                    <CheckinCard details={selected} />
+                    <CheckinCard newDetails={selected.newDetails} oldDetails={selected.oldDetails} />
                 </CardBox>
                 <MapBox>
-                    <GoogleMap checkins={checkins} setSelected={setSelected} />
+                    <GoogleMap checkins={checkins} setSelected={setNewDetails} />
                 </MapBox>
             </Box>
         }
