@@ -1,36 +1,19 @@
-import React, { FunctionComponent } from 'react';
-import styled, { keyframes } from 'styled-components';
+import React, { FunctionComponent, useEffect, useState } from 'react';
+import styled from 'styled-components';
 import CheckinDetails from '../../models/CheckinDetails';
 
-const fadeOut = keyframes`
-    from { opacity: 1; }
-    to { opacity: 0; }
-`;
+const transitionTime = 1000;
 
-const fadeIn = keyframes`
-    from { opacity: 0; }
-    to { opacity: 1; }
-`;
+interface CardProps {
+    hidden: boolean;
+}
 
-const FadeOut = styled.div`
-    position: absolute;
-    top: 0;
-    animation: ${fadeOut} 1s;
-    opacity: 0;
-`;
-
-const FadeIn = styled.div`
-    position: absolute;
-    top: 0;
-    animation-name: ${fadeIn};
-    animation-duration: 2s;
-    animation-delay: 1s;
-    opacity: 1;
-`;
-
-const Card = styled.div`
+const Card = styled.div<CardProps>`
     position: relative;
     padding: 0 1rem;
+    opacity: ${(p) => p.hidden ? 0 : 1};
+    transition: opacity ${transitionTime}ms;
+    -webkit-transition: opacity ${transitionTime}ms; /* Safari */
 `;
 
 const Sticker = styled.img`
@@ -43,36 +26,52 @@ interface OldAndNewDetails {
     newDetails?: CheckinDetails;
 }
 
-interface DetailsExpecting {
+interface DetailsProps {
     details: CheckinDetails;
+    hidden: boolean;
 }
 
-const CheckinCard: FunctionComponent<OldAndNewDetails> = ({ oldDetails, newDetails }) => (
-    <Card>
-        {oldDetails &&
-            <FadeOut>
-                <DetailsView details={oldDetails} />
-            </FadeOut>
+enum FadeState {
+    Initial,
+    FadingOut,
+    FadingIn,
+}
+
+interface CheckinCardState {
+    currentDetails?: CheckinDetails;
+    fadeState: FadeState;
+}
+
+const CheckinCard: FunctionComponent<OldAndNewDetails> = ({ oldDetails, newDetails }) => {
+    const [state, setState] = useState<CheckinCardState>({
+        currentDetails: newDetails,
+        fadeState: FadeState.Initial, // start fading out so we transition to fading in
+    });
+    useEffect(() => {
+        if (state.fadeState === FadeState.Initial) {
+            setState({ ...state, fadeState: FadeState.FadingIn });
+        } else if (state.fadeState === FadeState.FadingIn) {
+            setState({ currentDetails: oldDetails, fadeState: FadeState.FadingOut });
+            window.setTimeout(() => {
+                setState({ currentDetails: newDetails, fadeState: FadeState.FadingIn });
+            }, transitionTime);
         }
-        {newDetails &&
-            <FadeIn>
-                <DetailsView details={newDetails} />
-            </FadeIn>
+    }, [newDetails]);
+
+    const hidden = state.fadeState === FadeState.FadingOut;
+    const details = state.currentDetails;
+    return (details) ? <DetailsView hidden={hidden} details={details} /> : null;
+};
+
+const DetailsView: FunctionComponent<DetailsProps> = ({ hidden, details }) => (
+    <Card hidden={hidden}>
+        <a href={details.linkURL}><h3>{details.name}</h3></a>
+        <p>{details.dateString}</p>
+        {details.stickerImageURL &&
+            <Sticker src={details.stickerImageURL} />
         }
+        <p>{details.address}</p>
     </Card>
 );
-
-const DetailsView: FunctionComponent<DetailsExpecting> = ({ details }) => {
-    return (
-        <>
-            <a href={details.linkURL}><h3>{details.name}</h3></a>
-            <p>{details.dateString}</p>
-            {details.stickerImageURL &&
-                <Sticker src={details.stickerImageURL} />
-            }
-            <p>{details.address}</p>
-        </>
-    );
-};
 
 export default CheckinCard;
