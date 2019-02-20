@@ -1,8 +1,18 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import CheckinDetails from '../../models/CheckinDetails';
 
 const transitionTime = 1000;
+
+const FadeOut = keyframes`
+    from { opacity: 1; }
+    to { opacity: 0; }
+`;
+
+const FadeIn = keyframes`
+    from { opacity: 0; }
+    to { opacity: 1; }
+`;
 
 interface CardProps {
     hidden: boolean;
@@ -11,9 +21,7 @@ interface CardProps {
 const Card = styled.div<CardProps>`
     position: relative;
     padding: 0 1rem;
-    opacity: ${(p) => p.hidden ? 0 : 1};
-    transition: opacity ${transitionTime}ms;
-    -webkit-transition: opacity ${transitionTime}ms; /* Safari */
+    animation: ${(p) => p.hidden ? FadeOut : FadeIn} ${transitionTime}ms linear;
 `;
 
 const Sticker = styled.img`
@@ -60,6 +68,7 @@ const CheckinCard: FunctionComponent<OldAndNewDetails> = ({ oldDetails, newDetai
 
     const hidden = state.fadeState === FadeState.FadingOut;
     const details = state.currentDetails;
+    console.log(`hidden: ${hidden}, details: ${(details) ? details.name : 'none'}`);
     return (details) ? <DetailsView hidden={hidden} details={details} /> : null;
 };
 
