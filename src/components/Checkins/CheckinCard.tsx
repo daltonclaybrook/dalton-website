@@ -2,7 +2,7 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import CheckinDetails from '../../models/CheckinDetails';
 
-const transitionTime = 1000;
+const transitionTime = 200;
 
 const FadeOut = keyframes`
     from { opacity: 1; }
@@ -15,13 +15,13 @@ const FadeIn = keyframes`
 `;
 
 interface CardProps {
-    hidden: boolean;
+    isHidden: boolean;
 }
 
 const Card = styled.div<CardProps>`
     position: relative;
     padding: 0 1rem;
-    animation: ${(p) => p.hidden ? FadeOut : FadeIn} ${transitionTime}ms linear;
+    animation: ${(p) => p.isHidden ? FadeOut : FadeIn} ${transitionTime}ms linear;
 `;
 
 const Sticker = styled.img`
@@ -36,7 +36,7 @@ interface OldAndNewDetails {
 
 interface DetailsProps {
     details: CheckinDetails;
-    hidden: boolean;
+    isHidden: boolean;
 }
 
 enum FadeState {
@@ -66,14 +66,14 @@ const CheckinCard: FunctionComponent<OldAndNewDetails> = ({ oldDetails, newDetai
         }
     }, [newDetails]);
 
-    const hidden = state.fadeState === FadeState.FadingOut;
+    const isHidden = state.fadeState === FadeState.FadingOut;
     const details = state.currentDetails;
-    console.log(`hidden: ${hidden}, details: ${(details) ? details.name : 'none'}`);
-    return (details) ? <DetailsView hidden={hidden} details={details} /> : null;
+    console.log(`hidden: ${isHidden}, details: ${(details) ? details.name : 'none'}`);
+    return (details) ? <DetailsView isHidden={isHidden} details={details} /> : null;
 };
 
-const DetailsView: FunctionComponent<DetailsProps> = ({ hidden, details }) => (
-    <Card hidden={hidden}>
+const DetailsView: FunctionComponent<DetailsProps> = ({ isHidden, details }) => (
+    <Card isHidden={isHidden}>
         <a href={details.linkURL}><h3>{details.name}</h3></a>
         <p>{details.dateString}</p>
         {details.stickerImageURL &&
