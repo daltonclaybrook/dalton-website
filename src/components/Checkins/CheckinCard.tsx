@@ -5,13 +5,13 @@ import CheckinDetails from '../../models/CheckinDetails';
 const transitionTime = 1000;
 
 interface CardProps {
-    hidden: boolean;
+    isHidden: boolean;
 }
 
 const Card = styled.div<CardProps>`
     position: relative;
     padding: 0 1rem;
-    opacity: ${(p) => p.hidden ? 0 : 1};
+    opacity: ${(p) => p.isHidden ? 0 : 1};
     transition: opacity ${transitionTime}ms;
     -webkit-transition: opacity ${transitionTime}ms; /* Safari */
 `;
@@ -64,7 +64,7 @@ const CheckinCard: FunctionComponent<OldAndNewDetails> = ({ oldDetails, newDetai
 };
 
 const DetailsView: FunctionComponent<DetailsProps> = ({ hidden, details }) => (
-    <Card hidden={hidden}>
+    <Card isHidden={hidden}>
         <a href={details.linkURL}><h3>{details.name}</h3></a>
         <p>{details.dateString}</p>
         {details.stickerImageURL &&
