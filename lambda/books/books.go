@@ -41,24 +41,36 @@ func HandleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 }
 
 func mainFetch() (string, error) {
-	xmlBooks, err := fetchBooks("currently-reading")
-	if err != nil {
-		return "", err
+	c1 := make(chan FetchResult)
+	c2 := make(chan FetchResult)
+	go fetchBooks("currently-reading", c1)
+	go fetchBooks("reading-next", c2)
+
+	result1, result2 := <-c1, <-c2
+	if result1.err != nil {
+		return "", result1.err
+	} else if result2.err != nil {
+		return "", result2.err
 	}
 
-	jsonBooks := makeJSONBooks(xmlBooks)
-	jsonBytes, err := json.Marshal(jsonBooks)
+	combined := map[string][]JSONBook{
+		"reading": result1.books,
+		"next":    result2.books,
+	}
+
+	jsonBytes, err := json.Marshal(combined)
 	return string(jsonBytes), err
 }
 
 // called by lamda handler and used for testing
-func fetchBooks(shelf string) ([]XMLBook, error) {
-	books := []XMLBook{}
+func fetchBooks(shelf string, c chan FetchResult) {
+	books := []JSONBook{}
 
 	apiKey := os.Getenv("GOODREADS_API_KEY")
 	userID := os.Getenv("GOODREADS_USER_ID")
 	if len(apiKey) == 0 || len(userID) == 0 {
-		return books, missingEnvVariable
+		c <- FetchResult{books: books, err: missingEnvVariable}
+		return
 	}
 
 	query := url.Values{}
@@ -69,41 +81,47 @@ func fetchBooks(shelf string) ([]XMLBook, error) {
 
 	booksURL, err := url.Parse("https://www.goodreads.com/review/list.xml")
 	if err != nil {
-		return books, err
+		c <- FetchResult{books: books, err: err}
+		return
 	}
 	booksURL.RawQuery = query.Encode()
 
 	req, err := http.NewRequest(http.MethodGet, booksURL.String(), nil)
 	if err != nil {
-		return books, err
+		c <- FetchResult{books: books, err: err}
+		return
 	}
 
 	client := &http.Client{}
 	res, err := client.Do(req)
 	if err != nil {
-		return books, err
+		c <- FetchResult{books: books, err: err}
+		return
 	}
 	defer res.Body.Close()
 
 	if res.StatusCode != 200 {
-		return books, requestFailed
+		c <- FetchResult{books: books, err: requestFailed}
+		return
 	}
 
 	bytes, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return books, err
+		c <- FetchResult{books: books, err: err}
+		return
 	}
 
 	response := BooksResponse{}
 	if err := xml.Unmarshal(bytes, &response); err != nil {
-		return books, err
+		c <- FetchResult{books: books, err: err}
+		return
 	}
 
-	books = make([]XMLBook, len(response.Reviews.Reviews))
+	books = make([]JSONBook, len(response.Reviews.Reviews))
 	for idx, review := range response.Reviews.Reviews {
-		books[idx] = review.Book
+		books[idx] = review.Book.makeJSON()
 	}
-	return books, nil
+	c <- FetchResult{books: books, err: nil}
 }
 
 func debugFetch() {
@@ -113,14 +131,6 @@ func debugFetch() {
 	} else {
 		fmt.Printf("books: %v\n", books)
 	}
-}
-
-func makeJSONBooks(xmlBooks []XMLBook) []JSONBook {
-	jsonBooks := make([]JSONBook, len(xmlBooks))
-	for idx, book := range xmlBooks {
-		jsonBooks[idx] = book.makeJSON()
-	}
-	return jsonBooks
 }
 
 func (xmlBook XMLBook) makeJSON() (book JSONBook) {
@@ -136,6 +146,12 @@ func (xmlBook XMLBook) makeJSON() (book JSONBook) {
 	}
 	book.Authors = authors
 	return
+}
+
+// FetchResult is the result of a fetch
+type FetchResult struct {
+	books []JSONBook
+	err   error
 }
 
 // BooksResponseWrapper is the wrapper for BooksResponse
