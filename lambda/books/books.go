@@ -43,8 +43,8 @@ func HandleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 func mainFetch() (string, error) {
 	c1 := make(chan FetchResult)
 	c2 := make(chan FetchResult)
-	go fetchBooks("currently-reading", c1)
-	go fetchBooks("reading-next", c2)
+	go asyncFetchBooks("currently-reading", c1)
+	go asyncFetchBooks("reading-next", c2)
 
 	result1, result2 := <-c1, <-c2
 	if result1.err != nil {
@@ -62,15 +62,20 @@ func mainFetch() (string, error) {
 	return string(jsonBytes), err
 }
 
+// intended to be called in a goroutine
+func asyncFetchBooks(shelf string, c chan FetchResult) {
+	books, err := fetchBooks(shelf)
+	c <- FetchResult{books: books, err: err}
+}
+
 // called by lamda handler and used for testing
-func fetchBooks(shelf string, c chan FetchResult) {
+func fetchBooks(shelf string) ([]JSONBook, error) {
 	books := []JSONBook{}
 
 	apiKey := os.Getenv("GOODREADS_API_KEY")
 	userID := os.Getenv("GOODREADS_USER_ID")
 	if len(apiKey) == 0 || len(userID) == 0 {
-		c <- FetchResult{books: books, err: missingEnvVariable}
-		return
+		return books, missingEnvVariable
 	}
 
 	query := url.Values{}
@@ -81,47 +86,41 @@ func fetchBooks(shelf string, c chan FetchResult) {
 
 	booksURL, err := url.Parse("https://www.goodreads.com/review/list.xml")
 	if err != nil {
-		c <- FetchResult{books: books, err: err}
-		return
+		return books, err
 	}
 	booksURL.RawQuery = query.Encode()
 
 	req, err := http.NewRequest(http.MethodGet, booksURL.String(), nil)
 	if err != nil {
-		c <- FetchResult{books: books, err: err}
-		return
+		return books, err
 	}
 
 	client := &http.Client{}
 	res, err := client.Do(req)
 	if err != nil {
-		c <- FetchResult{books: books, err: err}
-		return
+		return books, err
 	}
 	defer res.Body.Close()
 
 	if res.StatusCode != 200 {
-		c <- FetchResult{books: books, err: requestFailed}
-		return
+		return books, requestFailed
 	}
 
 	bytes, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		c <- FetchResult{books: books, err: err}
-		return
+		return books, err
 	}
 
 	response := BooksResponse{}
 	if err := xml.Unmarshal(bytes, &response); err != nil {
-		c <- FetchResult{books: books, err: err}
-		return
+		return books, err
 	}
 
 	books = make([]JSONBook, len(response.Reviews.Reviews))
 	for idx, review := range response.Reviews.Reviews {
 		books[idx] = review.Book.makeJSON()
 	}
-	c <- FetchResult{books: books, err: nil}
+	return books, nil
 }
 
 func debugFetch() {
@@ -129,7 +128,7 @@ func debugFetch() {
 	if err != nil {
 		fmt.Printf("error: %v\n", err)
 	} else {
-		fmt.Printf("books: %v\n", books)
+		fmt.Println(books)
 	}
 }
 
