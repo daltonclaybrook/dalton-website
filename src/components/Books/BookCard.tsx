@@ -18,9 +18,7 @@ interface ImgProps {
 const PaddedImg = styled.img<ImgProps>`
     padding-right: 1rem;
     padding-bottom: 1rem;
-    ${(p) =>
-        p.shrink ? 'width: 3rem;' : ''
-    }
+    ${(p) => p.shrink ? 'width: 3rem;' : ''}
     height: auto;
 `;
 
@@ -36,7 +34,9 @@ const Author = styled.h4`
 const BookCard: FunctionComponent<BookCardProps> = ({book, shrinkImage}) => (
     <Box className="book">
         <div>
-            <PaddedImg shrink={shrinkImage} src={book.imageURL}/>
+            <a href={book.link}>
+                <PaddedImg shrink={shrinkImage} src={book.imageURL}/>
+            </a>
         </div>
         <div>
             <a href={book.link}><Title>{book.title}</Title></a>
