@@ -35,11 +35,11 @@ const View: FunctionComponent<BooksExpecting> = ({ books }) => (
     <Box>
         <ReadingSection>
             <Header>Reading</Header>
-            {books.reading.map((book) => <BookCard key={book.id} book={book} showImage={true} />)}
+            {books.reading.map((book) => <BookCard key={book.id} book={book} shrinkImage={false} />)}
         </ReadingSection>
         <NextSection>
             <Header>Next</Header>
-            {books.next.map((book) => <BookCard key={book.id} book={book} showImage={false} />)}
+            {books.next.map((book) => <BookCard key={book.id} book={book} shrinkImage={true} />)}
         </NextSection>
     </Box>
 );

@@ -4,29 +4,43 @@ import Book from '../../models/Book';
 
 interface BookCardProps {
     book: Book;
-    showImage: boolean;
+    shrinkImage: boolean;
 }
 
 const Box = styled.div`
     display: flex;
 `;
 
-const PaddedImg = styled.img`
+interface ImgProps {
+    shrink: boolean;
+}
+
+const PaddedImg = styled.img<ImgProps>`
     padding-right: 1rem;
+    padding-bottom: 1rem;
+    ${(p) =>
+        p.shrink ? 'width: 3rem;' : ''
+    }
+    height: auto;
 `;
 
-const NoMarginH3 = styled.h3`
+const Title = styled.h3`
     margin: 0;
 `;
 
-const BookCard: FunctionComponent<BookCardProps> = ({book, showImage}) => (
+const Author = styled.h4`
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+`;
+
+const BookCard: FunctionComponent<BookCardProps> = ({book, shrinkImage}) => (
     <Box className="book">
-        {showImage &&
-            <PaddedImg src={book.imageURL}/>
-        }
         <div>
-            <a href={book.link}><NoMarginH3>{book.title}</NoMarginH3></a>
-            <h4>{book.authors.join(', ')}</h4>
+            <PaddedImg shrink={shrinkImage} src={book.imageURL}/>
+        </div>
+        <div>
+            <a href={book.link}><Title>{book.title}</Title></a>
+            <Author>{book.authors.join(', ')}</Author>
         </div>
     </Box>
 );
