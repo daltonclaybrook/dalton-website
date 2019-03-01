@@ -5,22 +5,36 @@ import Header from '../shared/Header';
 import { fetchBooks } from './api';
 import BookCard from './BookCard';
 
+const maxWidth = 40;
+
 interface BooksExpecting {
     books: BooksResponse;
 }
 
 const Box = styled.div`
     display: flex;
+
+    @media (max-width: ${maxWidth}rem) {
+        flex-direction: column;
+    }
 `;
 
 const ReadingSection = styled.div`
     flex: 50%;
     padding-right: 1rem;
+
+    @media (max-width: ${maxWidth}rem) {
+        padding-right: 0;
+    }
 `;
 
 const NextSection = styled.div`
     flex: 50%;
     padding-left: 1rem;
+
+    @media (max-width: ${maxWidth}rem) {
+        padding-left: 0;
+    }
 `;
 
 const enhancer = (Component: FunctionComponent<BooksExpecting>) => () => {

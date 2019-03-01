@@ -22,6 +22,7 @@ type BookReview struct {
 
 // XMLBook represents a book from the goodreads xml response
 type XMLBook struct {
+	Id       int     `xml:"id"`
 	Title    string  `xml:"title"`
 	ImageURL string  `xml:"image_url"`
 	Link     string  `xml:"link"`
@@ -40,6 +41,7 @@ type Author struct {
 
 // JSONBook is the json representation of a goodreads book
 type JSONBook struct {
+	Id       int      `json:"id"`
 	Title    string   `json:"title"`
 	ImageURL string   `json:"imageURL"`
 	Link     string   `json:"link"`

@@ -133,6 +133,7 @@ func fetchBooks(shelf string) ([]JSONBook, error) {
 }
 
 func (xmlBook XMLBook) makeJSON() (book JSONBook) {
+	book.Id = xmlBook.Id
 	book.Title = xmlBook.Title
 	book.ImageURL = xmlBook.ImageURL
 	book.Link = xmlBook.Link
