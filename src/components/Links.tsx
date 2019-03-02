@@ -18,7 +18,7 @@ const LinksBlock = styled.div`
 const SpacedLink = styled(ExternalLink)`
     margin: 0rem 0.875rem;
 
-    @media (max-width: 30rem) {
+    @media (max-width: 30em) {
         margin: 0rem 0.275rem;
     }
 `;
