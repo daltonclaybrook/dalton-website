@@ -24,7 +24,7 @@ const Box = styled.div`
     }
 `;
 
-const StyledWorkout = styled.div`
+const StyledWorkout = styled(WorkoutCard)`
     width: calc(33% - 0.5em);
     margin-bottom: 1rem;
     border: 1px solid darkgray;
@@ -48,7 +48,7 @@ const Workouts: FunctionComponent<WorkoutsExpecting> = ({ workouts }) => (
     <>
         <Header>Workouts</Header>
         <Box>
-            {workouts.map((workout) => <StyledWorkout key={workout.id}><WorkoutCard {...workout} /></StyledWorkout> )}
+            {workouts.map((workout) => <StyledWorkout key={workout.id} {...workout} /> )}
         </Box>
     </>
 );

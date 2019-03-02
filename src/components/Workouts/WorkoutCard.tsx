@@ -1,6 +1,7 @@
-import React, { FunctionComponent } from 'react';
+import React, { FC, HTMLProps } from 'react';
 import styled from 'styled-components';
 import WorkoutViewModel from '../../view-models/WorkoutViewModel';
+import ExternalLink from '../shared/ExternalLink';
 
 const Image = styled.img`
     max-width: 100%;
@@ -18,14 +19,20 @@ const Subtitle = styled.h4`
     margin: 1rem 0;
 `;
 
-const WorkoutCard: FunctionComponent<WorkoutViewModel> = (workout) => (
-    <>
-        <a href={workout.link}><Image src={workout.imageURL} /></a>
+type WorkoutProps =
+    & WorkoutViewModel
+    & {
+        className?: string;
+    };
+
+const WorkoutCard: FC<WorkoutProps> = ({ className, ...workout }) => (
+    <div className={className}>
+        <ExternalLink href={workout.link}><Image alt={workout.name} src={workout.imageURL} /></ExternalLink>
         <TextArea>
-            <a href={workout.link}><Title>{workout.name}</Title></a>
+            <ExternalLink href={workout.link}><Title>{workout.name}</Title></ExternalLink>
             <Subtitle>{workout.startString}</Subtitle>
         </TextArea>
-    </>
+    </div>
 );
 
 export default WorkoutCard;

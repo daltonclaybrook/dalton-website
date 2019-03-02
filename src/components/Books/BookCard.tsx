@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
 import Book from '../../models/Book';
+import ExternalLink from '../shared/ExternalLink';
 
 interface BookCardProps {
     book: Book;
@@ -34,12 +35,12 @@ const Author = styled.h4`
 const BookCard: FunctionComponent<BookCardProps> = ({book, shrinkImage}) => (
     <Box className="book">
         <div>
-            <a href={book.link}>
+            <ExternalLink href={book.link}>
                 <PaddedImg shrink={shrinkImage} src={book.imageURL}/>
-            </a>
+            </ExternalLink>
         </div>
         <div>
-            <a href={book.link}><Title>{book.title}</Title></a>
+            <ExternalLink href={book.link}><Title>{book.title}</Title></ExternalLink>
             <Author>{book.authors.join(', ')}</Author>
         </div>
     </Box>
