@@ -13,27 +13,18 @@ interface BooksExpecting {
 
 const Box = styled.div`
     display: flex;
+    justify-content: space-between;
 
     @media (max-width: ${maxWidth}rem) {
         flex-direction: column;
     }
 `;
 
-const ReadingSection = styled.div`
-    flex: 50%;
-    padding-right: 1rem;
+const Section = styled.div`
+    width: calc(50% - 1rem);
 
     @media (max-width: ${maxWidth}rem) {
-        padding-right: 0;
-    }
-`;
-
-const NextSection = styled.div`
-    flex: 50%;
-    padding-left: 1rem;
-
-    @media (max-width: ${maxWidth}rem) {
-        padding-left: 0;
+        width: 100%;
     }
 `;
 
@@ -47,14 +38,14 @@ const enhancer = (Component: FunctionComponent<BooksExpecting>) => () => {
 
 const View: FunctionComponent<BooksExpecting> = ({ books }) => (
     <Box>
-        <ReadingSection>
+        <Section>
             <Header>Reading</Header>
             {books.reading.map((book) => <BookCard key={book.id} book={book} shrinkImage={false} />)}
-        </ReadingSection>
-        <NextSection>
-            <Header>Next</Header>
+        </Section>
+        <Section>
+            <Header>Want to read</Header>
             {books.next.map((book) => <BookCard key={book.id} book={book} shrinkImage={true} />)}
-        </NextSection>
+        </Section>
     </Box>
 );
 
