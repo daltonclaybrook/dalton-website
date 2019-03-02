@@ -6,19 +6,32 @@ import Header from '../shared/Header';
 import { fetchWorkouts } from './api';
 import WorkoutCard from './WorkoutCard';
 
+const maxWidth = 40;
+
 interface WorkoutsExpecting {
     workouts: WorkoutViewModel[];
 }
 
 const Box = styled.div`
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
+    /* reverse the margin from the last row */
+    margin-bottom: -1rem;
+
+    @media (max-width: ${maxWidth}rem) {
+        flex-direction: column;
+    }
 `;
 
 const StyledWorkout = styled.div`
-    flex: 1;
-    max-width: calc(33% - 0.5em);
+    width: calc(33% - 0.5em);
+    margin-bottom: 1rem;
     border: 1px solid darkgray;
+
+    @media (max-width: ${maxWidth}rem) {
+        width: 100%;
+    }
 `;
 
 const enhancer = (Component: FunctionComponent<WorkoutsExpecting>) => () => {
