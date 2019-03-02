@@ -5,6 +5,7 @@ import instagram from '../icons/instagram.svg';
 import linkedin from '../icons/linkedin.svg';
 import stackoverflow from '../icons/stack-overflow.svg';
 import twitter from '../icons/twitter.svg';
+import ExternalLink from './shared/ExternalLink';
 
 const LinksDiv = styled.div`
     text-align: center;
@@ -14,7 +15,7 @@ const LinksBlock = styled.div`
     display: inline-block;
 `;
 
-const SpacedLink = styled.a`
+const SpacedLink = styled(ExternalLink)`
     margin: 0rem 0.875rem;
 
     @media (max-width: 30rem) {
@@ -28,8 +29,8 @@ interface LinkProps {
     alt: string;
 }
 
-const ImgLink: FunctionComponent<LinkProps> = ({ link, img }) => (
-    <SpacedLink href={link}><img src={img} /></SpacedLink>
+const ImgLink: FunctionComponent<LinkProps> = ({ link, img, alt }) => (
+    <SpacedLink href={link}><img src={img} alt={alt} /></SpacedLink>
 );
 
 const Links: FunctionComponent = () => (

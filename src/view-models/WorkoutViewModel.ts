@@ -4,6 +4,7 @@ interface WorkoutViewModel {
     link: string;
     startString: string;
     durationString: string;
+    imageURL: string;
 
     distance: string;
     averageSpeed: string;

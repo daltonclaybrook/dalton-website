@@ -17,6 +17,7 @@ export const makeWorkoutViewModel = (workout: Workout): WorkoutViewModel => {
     const pelotonUserID = 'fe12e4e3cd1a41d5b7854144b7b1ea84';
     const pelotonWorkoutID = workout.external_id.replace(/\.tcx$/, '');
     const link = `https://members.onepeloton.com/members/${pelotonUserID}/workouts/${pelotonWorkoutID}`;
+    const imageURL = `https://api.onepeloton.com/api/workout/metric_graphic/${pelotonWorkoutID}.png`;
     const startDate = new Date(workout.start_date);
     const durationString = makeTimeStringFromSeconds(workout.elapsed_time);
     return {
@@ -25,6 +26,7 @@ export const makeWorkoutViewModel = (workout: Workout): WorkoutViewModel => {
         link,
         startString: startDate.toLocaleString(),
         durationString: `Duration: ${durationString}`,
+        imageURL,
 
         // todo
         distance: '',

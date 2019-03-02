@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import CheckinDetails from '../../models/CheckinDetails';
+import ExternalLink from '../shared/ExternalLink';
 
 const transitionTime = 200;
 
@@ -65,7 +66,7 @@ const CheckinCard: FunctionComponent<OldAndNewDetails> = ({ oldDetails, newDetai
 
 const DetailsView: FunctionComponent<DetailsProps> = ({ isHidden, details }) => (
     <Card isHidden={isHidden}>
-        <a href={details.linkURL}><h3>{details.name}</h3></a>
+        <ExternalLink href={details.linkURL}><h3>{details.name}</h3></ExternalLink>
         <p>{details.dateString}</p>
         {details.stickerImageURL &&
             <Sticker src={details.stickerImageURL} />
