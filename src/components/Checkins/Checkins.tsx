@@ -11,7 +11,6 @@ const maxWidth = 40;
 
 const Box = styled.div`
     display: flex;
-    margin: auto;
     height: 20rem;
 
     @media (max-width: ${maxWidth}rem) {
@@ -30,7 +29,7 @@ const MapBox = styled.div`
 
 const CardBox = styled.div`
     flex: 30%;
-    border: solid 1px darkgray;
+    border: 1px solid darkgray;
 `;
 
 interface CheckinsBoxProps {

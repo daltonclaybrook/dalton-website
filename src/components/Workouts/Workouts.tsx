@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
+import styled from 'styled-components';
 import WorkoutViewModel from '../../view-models/WorkoutViewModel';
 import { makeWorkoutViewModel } from '../../view-models/WorkoutViewModelFactory';
 import Header from '../shared/Header';
@@ -8,6 +9,17 @@ import WorkoutCard from './WorkoutCard';
 interface WorkoutsExpecting {
     workouts: WorkoutViewModel[];
 }
+
+const Box = styled.div`
+    display: flex;
+    justify-content: space-between;
+`;
+
+const StyledWorkout = styled.div`
+    flex: 1;
+    max-width: calc(33% - 0.5em);
+    border: 1px solid darkgray;
+`;
 
 const enhancer = (Component: FunctionComponent<WorkoutsExpecting>) => () => {
     const [workouts, loadWorkouts] = useState<WorkoutViewModel[]>([]);
@@ -20,10 +32,12 @@ const enhancer = (Component: FunctionComponent<WorkoutsExpecting>) => () => {
 };
 
 const Workouts: FunctionComponent<WorkoutsExpecting> = ({ workouts }) => (
-    <div className="workouts">
+    <>
         <Header>Workouts</Header>
-        {workouts.map((workout) => <WorkoutCard key={workout.id} {...workout} /> )}
-    </div>
+        <Box>
+            {workouts.map((workout) => <StyledWorkout><WorkoutCard key={workout.id} {...workout} /></StyledWorkout> )}
+        </Box>
+    </>
 );
 
 export default enhancer(Workouts);
