@@ -48,7 +48,7 @@ const Workouts: FunctionComponent<WorkoutsExpecting> = ({ workouts }) => (
     <>
         <Header>Workouts</Header>
         <Box>
-            {workouts.map((workout) => <StyledWorkout><WorkoutCard key={workout.id} {...workout} /></StyledWorkout> )}
+            {workouts.map((workout) => <StyledWorkout key={workout.id}><WorkoutCard {...workout} /></StyledWorkout> )}
         </Box>
     </>
 );
