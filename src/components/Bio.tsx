@@ -15,7 +15,7 @@ const Avatar = styled.img<SizeExpecting>`
     width: ${(p) => p.size}rem;
     height: auto;
 
-    @media (max-width: ${(p) => (p.size + Constants.contentWidthPadding * 2)}rem) {
+    @media (max-width: ${(p) => (p.size + Constants.contentWidthPadding * 2)}em) {
         width: 100%;
     }
 `;

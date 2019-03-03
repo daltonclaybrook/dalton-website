@@ -1,11 +1,10 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import BooksResponse from '../../models/BooksResponse';
+import Constants from '../../shared/Constants';
 import Header from '../shared/Header';
 import { fetchBooks } from './api';
 import BookCard from './BookCard';
-
-const maxWidth = 40;
 
 interface BooksExpecting {
     books: BooksResponse;
@@ -15,7 +14,7 @@ const Box = styled.div`
     display: flex;
     justify-content: space-between;
 
-    @media (max-width: ${maxWidth}rem) {
+    @media (max-width: ${Constants.mediaQueryMaxWidth}em) {
         flex-direction: column;
     }
 `;
@@ -23,7 +22,7 @@ const Box = styled.div`
 const Section = styled.div`
     width: calc(50% - 1rem);
 
-    @media (max-width: ${maxWidth}rem) {
+    @media (max-width: ${Constants.mediaQueryMaxWidth}em) {
         width: 100%;
     }
 `;

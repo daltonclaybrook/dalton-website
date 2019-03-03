@@ -1,12 +1,11 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import Constants from '../../shared/Constants';
 import WorkoutViewModel from '../../view-models/WorkoutViewModel';
 import { makeWorkoutViewModel } from '../../view-models/WorkoutViewModelFactory';
 import Header from '../shared/Header';
 import { fetchWorkouts } from './api';
 import WorkoutCard from './WorkoutCard';
-
-const maxWidth = 40;
 
 interface WorkoutsExpecting {
     workouts: WorkoutViewModel[];
@@ -19,7 +18,7 @@ const Box = styled.div`
     /* reverse the margin from the last row */
     margin-bottom: -1rem;
 
-    @media (max-width: ${maxWidth}rem) {
+    @media (max-width: ${Constants.mediaQueryMaxWidth}em) {
         flex-direction: column;
     }
 `;
@@ -29,7 +28,7 @@ const StyledWorkout = styled(WorkoutCard)`
     margin-bottom: 1rem;
     border: 1px solid darkgray;
 
-    @media (max-width: ${maxWidth}rem) {
+    @media (max-width: ${Constants.mediaQueryMaxWidth}em) {
         width: 100%;
     }
 `;
