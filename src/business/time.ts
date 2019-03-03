@@ -16,8 +16,16 @@ const makeFullDateString = (date: Date): string => {
     return `${day} ${month} ${dayNum} at ${hours}:${minuteString} ${ampm}`;
 };
 
-export const makeTimeString = (timestamp: number, now: Date = new Date()): string => {
-    const date = new Date(timestamp * 1000);
+const dateFromTime = (time: number|string): Date  => {
+    if (typeof time === 'number') {
+        return new Date(time * 1000);
+    } else {
+        return new Date(time);
+    }
+};
+
+export const makeTimeString = (time: number|string, now: Date = new Date()): string => {
+    const date = dateFromTime(time);
     const diffSeconds = (now.getTime() - date.getTime()) / 1000;
 
     if (diffSeconds < 300) { // five minutes
