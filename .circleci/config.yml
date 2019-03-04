@@ -60,7 +60,7 @@ jobs:
 
       - run:
           name: Deploy to S3
-          command: aws s3 sync workspace/build s3://dalton-react-site --delete
+          command: aws s3 sync workspace/build s3://dalton-site-prod --delete
 
 workflows:
   version: 2

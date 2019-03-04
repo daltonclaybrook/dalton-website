@@ -2,7 +2,7 @@
   "name": "dalton",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://dev.dalton.codes",
+  "homepage": "https://dalton.codes",
   "dependencies": {
     "@types/googlemaps": "^3.30.16",
     "@types/jest": "^23.3.11",
